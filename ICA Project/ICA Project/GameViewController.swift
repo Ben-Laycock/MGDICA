@@ -12,7 +12,9 @@ import GameplayKit
 
 class GameViewController: UIViewController
 {
-
+    
+    var gS : GameScene!
+    
     override func viewDidLoad()
     {
         
@@ -23,6 +25,7 @@ class GameViewController: UIViewController
             // Load the SKScene from 'GameScene.sks'
             if let scene = SKScene(fileNamed: "GameScene")
             {
+                gS = scene as! GameScene
                 // Set the scale mode to scale to fit the window
                 scene.scaleMode = .resizeFill
                 
@@ -37,7 +40,20 @@ class GameViewController: UIViewController
         }
         
     }
+    
+    
+    override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?)
+    {
 
+        if motion == .motionShake
+        {
+            print("Shake")
+            gS.printHelloMessage()
+        }
+        
+    }
+
+    
     override var shouldAutorotate: Bool
     {
         return true
