@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		DBAAA86F256FF3CD0066E892 /* Sounds in Resources */ = {isa = PBXBuildFile; fileRef = DBAAA86E256FF3CD0066E892 /* Sounds */; };
+		DBAAA871256FF9640066E892 /* Sounds in Resources */ = {isa = PBXBuildFile; fileRef = DBAAA870256FF9640066E892 /* Sounds */; };
 		DBAF31D92566B5FA00CB0123 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBAF31D82566B5FA00CB0123 /* AVFoundation.framework */; };
 		DBF79F132554450B00199755 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF79F122554450B00199755 /* AppDelegate.swift */; };
 		DBF79F152554450B00199755 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = DBF79F142554450B00199755 /* GameScene.sks */; };
@@ -39,7 +39,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		DBAAA86E256FF3CD0066E892 /* Sounds */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Sounds; path = ../../../../../../Downloads/Sounds; sourceTree = "<group>"; };
+		DBAAA870256FF9640066E892 /* Sounds */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Sounds; sourceTree = "<group>"; };
 		DBAF31D82566B5FA00CB0123 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		DBF79F0F2554450B00199755 /* ICA Project.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ICA Project.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBF79F122554450B00199755 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -126,7 +126,7 @@
 				DBF79F1F2554450D00199755 /* Assets.xcassets */,
 				DBF79F212554450D00199755 /* LaunchScreen.storyboard */,
 				DBF79F242554450D00199755 /* Info.plist */,
-				DBAAA86E256FF3CD0066E892 /* Sounds */,
+				DBAAA870256FF9640066E892 /* Sounds */,
 			);
 			path = "ICA Project";
 			sourceTree = "<group>";
@@ -253,7 +253,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DBAAA86F256FF3CD0066E892 /* Sounds in Resources */,
+				DBAAA871256FF9640066E892 /* Sounds in Resources */,
 				DBF79F1E2554450B00199755 /* Main.storyboard in Resources */,
 				DBF79F152554450B00199755 /* GameScene.sks in Resources */,
 				DBF79F202554450D00199755 /* Assets.xcassets in Resources */,
