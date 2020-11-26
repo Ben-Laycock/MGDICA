@@ -58,7 +58,9 @@ class GameScene: SKScene
     
     override func update(_ currentTime: TimeInterval)
     {
+        
         // Code called each frame before rendering
+        
         
     }
     
