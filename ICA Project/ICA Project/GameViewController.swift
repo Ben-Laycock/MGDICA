@@ -13,7 +13,8 @@ import GameplayKit
 class GameViewController: UIViewController
 {
     
-    var gS : GameScene!
+    var mainMenuScene : MainMenuScene!
+    var gameScene : GameScene!
     
     override func viewDidLoad()
     {
@@ -22,21 +23,32 @@ class GameViewController: UIViewController
         
         if let view = self.view as! SKView?
         {
-            // Load the SKScene from 'GameScene.sks'
-            if let scene = GameScene(fileNamed: "GameScene")
+            
+            // Load to Main Menu scene
+            if let mScene = MainMenuScene(fileNamed: "MainMenuScene")
             {
-                gS = scene
-                // Set the scale mode to scale to fit the window
-                scene.scaleMode = .resizeFill
+                mainMenuScene = mScene
                 
-                // Present the scene
-                view.presentScene(scene)
+                // Make scene scale to fit the window
+                mScene.scaleMode = .resizeFill
+                
+                view.presentScene(mScene)
+            }
+            
+            // Load the SKScene from 'GameScene.sks'
+            if let gScene = GameScene(fileNamed: "GameScene")
+            {
+                gameScene = gScene
+                
+                // Make scene scale to fit the window
+                gScene.scaleMode = .resizeFill
             }
             
             view.ignoresSiblingOrder = true
             
             view.showsFPS = true
             view.showsNodeCount = true
+            
         }
         
     }
@@ -48,7 +60,7 @@ class GameViewController: UIViewController
         if motion == .motionShake
         {
             print("Shake")
-            gS.printHelloMessage()
+            gameScene.printHelloMessage()
         }
         
     }
