@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		DBAAA871256FF9640066E892 /* Sounds in Resources */ = {isa = PBXBuildFile; fileRef = DBAAA870256FF9640066E892 /* Sounds */; };
 		DBAF31D92566B5FA00CB0123 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBAF31D82566B5FA00CB0123 /* AVFoundation.framework */; };
+		DBE7BFBB2573C0F5005D711A /* MainMenuScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = DBE7BFBA2573C0F5005D711A /* MainMenuScene.sks */; };
+		DBE7BFBD2573C122005D711A /* MainMenuScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE7BFBC2573C122005D711A /* MainMenuScene.swift */; };
 		DBF79F132554450B00199755 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF79F122554450B00199755 /* AppDelegate.swift */; };
 		DBF79F152554450B00199755 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = DBF79F142554450B00199755 /* GameScene.sks */; };
 		DBF79F172554450B00199755 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = DBF79F162554450B00199755 /* Actions.sks */; };
@@ -41,6 +43,8 @@
 /* Begin PBXFileReference section */
 		DBAAA870256FF9640066E892 /* Sounds */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Sounds; sourceTree = "<group>"; };
 		DBAF31D82566B5FA00CB0123 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		DBE7BFBA2573C0F5005D711A /* MainMenuScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MainMenuScene.sks; sourceTree = "<group>"; };
+		DBE7BFBC2573C122005D711A /* MainMenuScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenuScene.swift; sourceTree = "<group>"; };
 		DBF79F0F2554450B00199755 /* ICA Project.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ICA Project.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBF79F122554450B00199755 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DBF79F142554450B00199755 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
@@ -122,6 +126,8 @@
 				DBF79F162554450B00199755 /* Actions.sks */,
 				DBF79F182554450B00199755 /* GameScene.swift */,
 				DBF79F1A2554450B00199755 /* GameViewController.swift */,
+				DBE7BFBA2573C0F5005D711A /* MainMenuScene.sks */,
+				DBE7BFBC2573C122005D711A /* MainMenuScene.swift */,
 				DBF79F1C2554450B00199755 /* Main.storyboard */,
 				DBF79F1F2554450D00199755 /* Assets.xcassets */,
 				DBF79F212554450D00199755 /* LaunchScreen.storyboard */,
@@ -254,6 +260,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DBAAA871256FF9640066E892 /* Sounds in Resources */,
+				DBE7BFBB2573C0F5005D711A /* MainMenuScene.sks in Resources */,
 				DBF79F1E2554450B00199755 /* Main.storyboard in Resources */,
 				DBF79F152554450B00199755 /* GameScene.sks in Resources */,
 				DBF79F202554450D00199755 /* Assets.xcassets in Resources */,
@@ -285,6 +292,7 @@
 			files = (
 				DBF79F192554450B00199755 /* GameScene.swift in Sources */,
 				DBF79F1B2554450B00199755 /* GameViewController.swift in Sources */,
+				DBE7BFBD2573C122005D711A /* MainMenuScene.swift in Sources */,
 				DBF79F132554450B00199755 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
