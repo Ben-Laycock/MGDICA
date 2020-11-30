@@ -13,6 +13,8 @@ import GameplayKit
 
 class MainMenuScene: SKScene
 {
+
+    var gameScene : GameScene!
     
     let w = UIScreen.main.bounds.width
     let h = UIScreen.main.bounds.height
@@ -31,7 +33,6 @@ class MainMenuScene: SKScene
     
     func loadScene()
     {
-        let gameScene = GameScene(fileNamed: "GameScene")
         view?.presentScene(gameScene)
     }
     

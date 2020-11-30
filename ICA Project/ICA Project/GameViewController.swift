@@ -13,8 +13,8 @@ import GameplayKit
 class GameViewController: UIViewController
 {
     
-    var mainMenuScene : MainMenuScene!
     var gameScene : GameScene!
+    var mainMenuScene : MainMenuScene!
     
     override func viewDidLoad()
     {
@@ -24,17 +24,6 @@ class GameViewController: UIViewController
         if let view = self.view as! SKView?
         {
             
-            // Load to Main Menu scene
-            if let mScene = MainMenuScene(fileNamed: "MainMenuScene")
-            {
-                mainMenuScene = mScene
-                
-                // Make scene scale to fit the window
-                mScene.scaleMode = .resizeFill
-                
-                view.presentScene(mScene)
-            }
-            
             // Load the SKScene from 'GameScene.sks'
             if let gScene = GameScene(fileNamed: "GameScene")
             {
@@ -42,6 +31,18 @@ class GameViewController: UIViewController
                 
                 // Make scene scale to fit the window
                 gScene.scaleMode = .resizeFill
+            }
+            
+            // Load to Main Menu scene
+            if let mScene = MainMenuScene(fileNamed: "MainMenuScene")
+            {
+                mainMenuScene = mScene
+                mScene.gameScene = gameScene
+                
+                // Make scene scale to fit the window
+                mScene.scaleMode = .resizeFill
+                
+                view.presentScene(mScene)
             }
             
             view.ignoresSiblingOrder = true

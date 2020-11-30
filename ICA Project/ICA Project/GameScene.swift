@@ -12,90 +12,6 @@ import GameplayKit
 import CoreMotion
 
 
-// Maybe needs to be put into a helpers swift file later
-func MagCG(_ vector: CGVector) -> (CGFloat)
-{
-    return CGFloat(sqrtf(Float(vector.dx * vector.dx + vector.dy * vector.dy)))
-}
-
-func NormCG(_ vector: CGVector) -> (CGVector)
-{
-    var v = vector
-    let mag = MagCG(v)
-    v.dx /= mag
-    v.dy /= mag
-    return v
-}
-
-
-class Virus : SKSpriteNode
-{
-    
-    var health : Int
-    var movementSpeed : Float
-    
-    init(texture: SKTexture!, color: UIColor, size: CGSize, health: Int, movementSpeed : Float)
-    {
-        
-        self.health = health
-        self.movementSpeed = movementSpeed
-        
-        super.init(texture: texture, color: color, size: size)
-        
-    }
-    
-    required init?(coder aDecoder: NSCoder)
-    {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    
-    func DecreaseHealth(by amount: Int)
-    {
-        
-        self.health -= amount;
-        if health <= 0 { self.removeFromParent() }
-        
-    }
-    
-    func MoveToTarget(at location: CGVector, precision pC: CGFloat)
-    {
-        
-        // Position
-        let p = CGVector(dx: self.position.x, dy: self.position.y)
-        // Target
-        let t = location
-        
-        // Direction to target
-        var pT = CGVector(dx: t.dx - p.dx, dy: t.dy - p.dy)
-        
-        // Return if distance to target is less than the required precision
-        if MagCG(pT) < pC
-        {
-            self.physicsBody?.velocity = CGVector.zero
-            return
-        }
-        
-        pT = NormCG(pT) // pT = Normalized vector in direction of the target
-        
-        let finalVector = CGVector(dx: pT.dx * CGFloat(movementSpeed), dy: pT.dy * CGFloat(movementSpeed))
-        
-        self.physicsBody?.velocity = finalVector
-        //self.physicsBody?.applyForce(finalVector)
-        
-    }
-    
-}
-
-
-func SpawnVirus(texture tex: SKTexture, health h: Int, movementSpeed mS: Float) -> (Virus)
-{
-    let v = Virus(texture: tex, color: UIColor.clear, size: tex.size(), health: h, movementSpeed: mS)
-    
-    return v;
-}
-
-
 class GameScene: SKScene
 {
     
@@ -104,7 +20,11 @@ class GameScene: SKScene
     
     let virusTexture = SKTexture(imageNamed: "Virus")
     var textureSize = CGSize.zero
-    let v = Virus(texture: SKTexture(imageNamed: "Virus"), color: UIColor.clear, size: SKTexture(imageNamed: "Virus").size(), health: 1, movementSpeed: 100.0)
+    
+    let numOfViruses = 50
+    
+    var activeViruses = Set<Virus>()
+    var inactiveViruses = Set<Virus>()
     
     var audioPlayer1 = AVAudioPlayer()
     
@@ -113,10 +33,23 @@ class GameScene: SKScene
     {
         if textureSize == CGSize.zero { textureSize = virusTexture.size() }
         
-        v.position = CGPoint(x: w - 100.0, y: h/2)
-        v.physicsBody = SKPhysicsBody(circleOfRadius: textureSize.width)
-        v.physicsBody?.affectedByGravity = false
-        addChild(v)
+        // Setup Viruses
+        for _ in 1...numOfViruses
+        {
+            let v = CreateVirus(texture: virusTexture, health: 1, movementSpeed: 20.0)
+            
+            inactiveViruses.insert(v)
+            
+            v.position = CGPoint(x: w - 100.0, y: h/2)
+            v.size = CGSize(width: textureSize.width * 0.2, height: textureSize.height * 0.2)
+            v.physicsBody = SKPhysicsBody(circleOfRadius: textureSize.width)
+            v.physicsBody?.affectedByGravity = false
+            v.physicsBody?.collisionBitMask = 0x00000000
+
+            v.isAlive = false
+            
+            addChild(v)
+        }
         
         let sound = Bundle.main.path(forResource: "Sounds/Beep.mp3", ofType: nil)
         
@@ -135,8 +68,9 @@ class GameScene: SKScene
     {
         
         //let sound = Bundle.main.path(forResource: "Sounds/Beep.mp3", ofType: nil)
-        let playSound = SKAction.playSoundFileNamed("Sounds/Beep.mp3", waitForCompletion: true)
-        self.run(playSound)
+        
+        //let playSound = SKAction.playSoundFileNamed("Sounds/Beep.mp3", waitForCompletion: true)
+        //self.run(playSound)
         
     }
     
@@ -152,6 +86,13 @@ class GameScene: SKScene
         
         // What should be done with the tapped Virus?
         tappedObject.DecreaseHealth(by: 1)
+        //audioPlayer1.play()
+        
+        if !tappedObject.isAlive
+        {
+            activeViruses.remove(tappedObject)
+            inactiveViruses.insert(tappedObject)
+        }
         
     }
     
@@ -170,9 +111,56 @@ class GameScene: SKScene
     override func update(_ currentTime: TimeInterval)
     {
         
-        // Code called each frame before rendering
-        v.MoveToTarget(at: CGVector(dx: w/2, dy: h/2), precision: 20.0)
+        let origionalScale = textureSize.width * 0.2
+        let modification = CGFloat(abs(sin(currentTime)))
+        let newScale = origionalScale + (origionalScale * modification)
         
+        let resizeVirus = SKAction.resize(toWidth: newScale, height: newScale, duration: 0.5)
+        
+        // Code called each frame before rendering
+        
+        for v in inactiveViruses {
+            v.isAlive = false // Inactive viruses shouldn't be alive
+            v.Update()
+        }
+        
+        for v in activeViruses {
+            // Manage current active virus
+            v.Update()
+            v.run(resizeVirus)
+        }
+        
+        let pos = CGPoint(x: CGFloat(Float.random(in: 1.0...Float(w))), y: CGFloat(Float.random(in: 1.0...Float(h))))
+        
+        SpawnVirus(at: pos, health: 1, speed: 20.0)
+        
+    }
+    
+    
+    func CreateVirus(texture tex: SKTexture, health h: Int, movementSpeed mS: Float) -> (Virus)
+    {
+        let v = Virus(texture: tex, color: UIColor.clear, size: tex.size(), health: h, movementSpeed: mS)
+        
+        return v;
+    }
+    
+    func SpawnVirus(at p: CGPoint, health h: Int, speed s: Float)
+    {
+        
+        if inactiveViruses.isEmpty
+        {
+            print("No viruses to spawn!")
+            return
+        }
+        print("Spawned virus")
+        
+        let v = inactiveViruses.popFirst()
+        activeViruses.insert(v!)
+        
+        v?.position = p
+        v?.health = h
+        v?.movementSpeed = s
+        v?.isAlive = true
         
     }
     

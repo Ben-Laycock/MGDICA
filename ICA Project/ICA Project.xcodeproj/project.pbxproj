@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B52F489B2575534900B043DF /* VectorHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B52F489A2575534900B043DF /* VectorHelpers.swift */; };
+		B52F48A125757F2A00B043DF /* Virus.swift in Sources */ = {isa = PBXBuildFile; fileRef = B52F48A025757F2A00B043DF /* Virus.swift */; };
 		DBAAA871256FF9640066E892 /* Sounds in Resources */ = {isa = PBXBuildFile; fileRef = DBAAA870256FF9640066E892 /* Sounds */; };
 		DBAF31D92566B5FA00CB0123 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBAF31D82566B5FA00CB0123 /* AVFoundation.framework */; };
 		DBE7BFBB2573C0F5005D711A /* MainMenuScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = DBE7BFBA2573C0F5005D711A /* MainMenuScene.sks */; };
@@ -41,6 +43,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B52F489A2575534900B043DF /* VectorHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VectorHelpers.swift; sourceTree = "<group>"; };
+		B52F48A025757F2A00B043DF /* Virus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Virus.swift; sourceTree = "<group>"; };
 		DBAAA870256FF9640066E892 /* Sounds */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Sounds; sourceTree = "<group>"; };
 		DBAF31D82566B5FA00CB0123 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		DBE7BFBA2573C0F5005D711A /* MainMenuScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MainMenuScene.sks; sourceTree = "<group>"; };
@@ -125,6 +129,8 @@
 				DBF79F142554450B00199755 /* GameScene.sks */,
 				DBF79F162554450B00199755 /* Actions.sks */,
 				DBF79F182554450B00199755 /* GameScene.swift */,
+				B52F48A025757F2A00B043DF /* Virus.swift */,
+				B52F489A2575534900B043DF /* VectorHelpers.swift */,
 				DBF79F1A2554450B00199755 /* GameViewController.swift */,
 				DBE7BFBA2573C0F5005D711A /* MainMenuScene.sks */,
 				DBE7BFBC2573C122005D711A /* MainMenuScene.swift */,
@@ -290,7 +296,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B52F48A125757F2A00B043DF /* Virus.swift in Sources */,
 				DBF79F192554450B00199755 /* GameScene.swift in Sources */,
+				B52F489B2575534900B043DF /* VectorHelpers.swift in Sources */,
 				DBF79F1B2554450B00199755 /* GameViewController.swift in Sources */,
 				DBE7BFBD2573C122005D711A /* MainMenuScene.swift in Sources */,
 				DBF79F132554450B00199755 /* AppDelegate.swift in Sources */,
@@ -467,7 +475,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = UU8FBYK5RR;
 				INFOPLIST_FILE = "ICA Project/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -484,7 +494,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = UU8FBYK5RR;
 				INFOPLIST_FILE = "ICA Project/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
