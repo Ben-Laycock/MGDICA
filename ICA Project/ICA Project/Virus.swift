@@ -15,19 +15,22 @@ import CoreMotion
 class Virus : SKSpriteNode
 {
     
-    var health : Int
-    var movementSpeed : Float
-    var isAlive = false
+    var mHealth : Int
+    var mMovementSpeed : Float
+    var mIsAlive = false
+    var mTargetPosition = CGPoint.zero
+    var mDamageRange = 20.0
     
     init(texture: SKTexture!, color: UIColor, size: CGSize, health: Int, movementSpeed : Float)
     {
         
-        self.health = health
-        self.movementSpeed = movementSpeed
+        self.mHealth = health
+        self.mMovementSpeed = movementSpeed
         
         super.init(texture: texture, color: color, size: size)
         
     }
+    
     
     required init?(coder aDecoder: NSCoder)
     {
@@ -38,9 +41,9 @@ class Virus : SKSpriteNode
     func Update()
     {
         
-        if isAlive
+        if mIsAlive
         {
-            MoveToTarget(at: CGVector.zero, precision: 20.0) // Replace CGVector.zero later
+            MoveToTarget(at: mTargetPosition.ToVector(), precision: 20.0) // Replace CGVector.zero later
         }
         else
         {
@@ -53,15 +56,16 @@ class Virus : SKSpriteNode
     func DecreaseHealth(by amount: Int)
     {
         
-        self.health -= amount;
+        self.mHealth -= amount;
         
         // Manage virus death
-        if health <= 0
+        if mHealth <= 0
         {
-            self.isAlive = false
+            self.mIsAlive = false
         }
         
     }
+    
     
     func MoveToTarget(at location: CGVector, precision pC: CGFloat)
     {
@@ -72,18 +76,18 @@ class Virus : SKSpriteNode
         let t = location
         
         // Direction to target
-        var pT = CGVector(dx: t.dx - p.dx, dy: t.dy - p.dy)
+        var pT = t - p
         
         // Return if distance to target is less than the required precision
-        if MagCG(pT) < pC
+        if pT.Mag() < pC
         {
             self.physicsBody?.velocity = CGVector.zero
             return
         }
         
-        pT = NormCG(pT) // pT = Normalized vector in direction of the target
+        pT.Normilze() // pT = Normalized vector in direction of the target
         
-        let finalVector = CGVector(dx: pT.dx * CGFloat(movementSpeed), dy: pT.dy * CGFloat(movementSpeed))
+        let finalVector = pT * CGFloat(mMovementSpeed)
         
         self.physicsBody?.velocity = finalVector
         //self.physicsBody?.applyForce(finalVector)

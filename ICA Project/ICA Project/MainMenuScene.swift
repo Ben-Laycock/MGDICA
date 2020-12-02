@@ -14,26 +14,49 @@ import GameplayKit
 class MainMenuScene: SKScene
 {
 
-    var gameScene : GameScene!
+    var mGameScene : GameScene!
     
-    let w = UIScreen.main.bounds.width
-    let h = UIScreen.main.bounds.height
+    let mScreenWidth = UIScreen.main.bounds.width
+    let mScreenHeight = UIScreen.main.bounds.height
         
-    let mainMenuTitleLabel = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
+    let mMainMenuTitleLabel = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
+    
+    let mPlayButton = SKSpriteNode(imageNamed: "Mine")
+    let mOptionsButton = SKSpriteNode(imageNamed: "Mine")
+    
+    var mHasCompleteSetup = false
     
     override func didMove(to view: SKView)
     {
         
-        mainMenuTitleLabel.position = CGPoint(x: w/2, y: h/2)
-        mainMenuTitleLabel.text = "Main Menu"
-        mainMenuTitleLabel.fontSize = 48
-        addChild(mainMenuTitleLabel)
+        if mHasCompleteSetup
+        {
+           return
+        }
+        
+        mMainMenuTitleLabel.position = CGPoint(x: mScreenWidth / 2, y: mScreenHeight / 2)
+        mMainMenuTitleLabel.text = "Main Menu"
+        mMainMenuTitleLabel.fontSize = 48
+        addChild(mMainMenuTitleLabel)
+        
+        mPlayButton.name = "PlayButton"
+        mPlayButton.position = CGPoint(x: 200, y: mScreenHeight - mScreenHeight / 4)
+        mPlayButton.size = SKTexture(imageNamed: "Mine").size() * 0.3
+        addChild(mPlayButton)
+        
+        mOptionsButton.name = "OptionsButton"
+        mOptionsButton.position = CGPoint(x: 200, y: (mScreenHeight / 2) - mScreenHeight / 4)
+        mOptionsButton.size = SKTexture(imageNamed: "Mine").size() * 0.3
+        addChild(mOptionsButton)
+     
+        mHasCompleteSetup = true
         
     }
     
     func loadScene()
     {
-        view?.presentScene(gameScene)
+        view?.presentScene(mGameScene, transition: .reveal(with: SKTransitionDirection.left, duration: 1.0))
+        //view?.presentScene(mGameScene)
     }
     
     
@@ -47,7 +70,21 @@ class MainMenuScene: SKScene
         
         super.touchesEnded(touches, with: event)
         
-        loadScene()
+        for touch in touches
+        {
+            let pos = touch.location(in: self) // Position of the touch
+            let node = atPoint(pos) // Node at the touch position
+            
+            if node.name == "PlayButton"
+            {
+                loadScene()
+            }
+            
+            if node.name == "OptionsButton"
+            {
+                
+            }
+        }
         
     }
     

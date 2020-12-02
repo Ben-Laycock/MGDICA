@@ -13,8 +13,9 @@ import GameplayKit
 class GameViewController: UIViewController
 {
     
-    var gameScene : GameScene!
-    var mainMenuScene : MainMenuScene!
+    var mGameOverScene : GameOverScene!
+    var mGameScene : GameScene!
+    var mMainMenuScene : MainMenuScene!
     
     override func viewDidLoad()
     {
@@ -24,26 +25,45 @@ class GameViewController: UIViewController
         if let view = self.view as! SKView?
         {
             
-            // Load the SKScene from 'GameScene.sks'
+            // Load game over scene
+            if let goScene = GameOverScene(fileNamed: "GameOverScene")
+            {
+                mGameOverScene = goScene
+                
+                // Make scene scale to fit the window
+                goScene.scaleMode = .resizeFill
+            }
+            
+            // Load game scene
             if let gScene = GameScene(fileNamed: "GameScene")
             {
-                gameScene = gScene
+                mGameScene = gScene
                 
                 // Make scene scale to fit the window
                 gScene.scaleMode = .resizeFill
             }
             
-            // Load to Main Menu scene
+            // Load main menu scene
             if let mScene = MainMenuScene(fileNamed: "MainMenuScene")
             {
-                mainMenuScene = mScene
-                mScene.gameScene = gameScene
+                mMainMenuScene = mScene
                 
                 // Make scene scale to fit the window
                 mScene.scaleMode = .resizeFill
                 
                 view.presentScene(mScene)
             }
+            
+            // Game scene
+            mGameScene.mMainMenuScene = mMainMenuScene
+            mGameScene.mGameOverScene = mGameOverScene
+            
+            // Main menu scene
+            mMainMenuScene.mGameScene = mGameScene
+            
+            // Game over scene
+            mGameOverScene.mGameScene = mGameScene
+            mGameOverScene.mMainMenuScene = mMainMenuScene
             
             view.ignoresSiblingOrder = true
             
@@ -54,18 +74,6 @@ class GameViewController: UIViewController
         
     }
     
-    
-    override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?)
-    {
-
-        if motion == .motionShake
-        {
-            print("Shake")
-            gameScene.printHelloMessage()
-        }
-        
-    }
-
     
     override var shouldAutorotate: Bool
     {
