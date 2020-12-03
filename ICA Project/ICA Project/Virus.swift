@@ -85,7 +85,7 @@ class Virus : SKSpriteNode
             return
         }
         
-        pT.Normilze() // pT = Normalized vector in direction of the target
+        pT.Normalize() // pT = Normalized vector in direction of the target
         
         let finalVector = pT * CGFloat(mMovementSpeed)
         

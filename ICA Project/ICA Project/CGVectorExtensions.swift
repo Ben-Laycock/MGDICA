@@ -20,6 +20,11 @@ extension CGVector
         return CGVector(dx: a.dx * b.dx, dy: a.dy * b.dy)
     }
     
+    static func +(_ a: CGVector, _ b: CGVector) -> (CGVector)
+    {
+        return CGVector(dx: a.dx + b.dx, dy: a.dy + b.dy)
+    }
+    
     static func -(_ a: CGVector, _ b: CGVector) -> (CGVector)
     {
         return CGVector(dx: a.dx - b.dx, dy: a.dy - b.dy)
@@ -32,14 +37,23 @@ extension CGVector
     
     func Norm() -> (CGVector)
     {
+        if Mag() == 0
+        {
+            return self
+        }
+        
         return CGVector(dx: dx / Mag(), dy: dy / Mag())
     }
     
-    mutating func Normilze()
+    mutating func Normalize()
     {
-        let m = Mag()
-        dx /= m
-        dy /= m
+        if Mag() == 0
+        {
+            return
+        }
+        
+        dx /= Mag()
+        dy /= Mag()
     }
     
     func ToPoint() -> (CGPoint)

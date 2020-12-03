@@ -63,6 +63,11 @@ class GameScene: SKScene
     
     // Device Motion
     let mMotionManager = CMMotionManager()
+    // Accelerometer
+    var accelerationThreshold = 2.0
+    // Gyroscope variables
+    var gyroVector = CGVector.zero
+    var gyroChangePrecision = CGFloat(0.2)
     
     var mHasCompleteSetup = false
     
@@ -201,20 +206,24 @@ class GameScene: SKScene
         // Accelerometer
         if let accelerometer = mMotionManager.accelerometerData
         {
-            if abs(accelerometer.acceleration.z) > 2.0
+            if abs(accelerometer.acceleration.z) > accelerationThreshold
             {
                 print("Shake \(Float.random(in: 1.0...100.0))")
                 // What should happen when the device is shaken?
+                // Push viruses to edge of the screen
             }
             
             //print("A  X: " + String(accelerometer.acceleration.x) + "     Y: " + String(accelerometer.acceleration.y) + "     Z: " + String(accelerometer.acceleration.z))
-            //physicsWorld.gravity = CGVector(dx: accelerometer.acceleration.y * -50, dy: accelerometer.acceleration.x*50)
         }
         
         // Gyroscope
         if let gyroscope = mMotionManager.gyroData
         {
-            let gyroVector = CGVector(dx: gyroscope.rotationRate.x, dy: gyroscope.rotationRate.y)
+            let newGyroVector = CGVector(dx: gyroscope.rotationRate.x, dy: gyroscope.rotationRate.y)
+            
+            gyroVector = newGyroVector.Norm()
+
+            
             //print("G  X: " + String(gyroscope.rotationRate.x) + "     Y: " + String(gyroscope.rotationRate.y) + "     Z: " + String(gyroscope.rotationRate.z))
         }
         
@@ -250,7 +259,7 @@ class GameScene: SKScene
             let dirToTarget = virus.mTargetPosition.ToVector() - virus.position.ToVector()
             if dirToTarget.Mag() <= CGFloat(virus.mDamageRange)
             {
-                mCore.mHealth -= 1
+                //mCore.mHealth -= 1
                 virus.mIsAlive = false
                 mActiveViruses.remove(virus)
                 mInactiveViruses.insert(virus)
@@ -264,13 +273,15 @@ class GameScene: SKScene
         // Bombs
         for bomb in mInactiveBombs
         {
-            bomb.mIsAlive = false // Inactive viruses shouldn't be alive
+            bomb.mMovementDirection = bomb.mMovementDirection + gyroVector
+            bomb.mIsAlive = false // Inactive bombs shouldn't be alive
             bomb.Update()
         }
         
         for bomb in mActiveBombs
         {
-            // Manage current active virus
+            // Manage current active bombs
+            bomb.mMovementDirection = bomb.mMovementDirection + gyroVector
             bomb.Update()
             //bomb.run(resizeVirus)
         }
@@ -279,7 +290,11 @@ class GameScene: SKScene
         let pos = CGPoint(x: CGFloat(Float.random(in: 1.0...Float(mScreenWidth))), y: CGFloat(Float.random(in: 1.0...Float(mScreenHeight))))
         SpawnVirus(at: pos, health: 1, speed: 50.0)
         
-        SpawnBomb(at: pos, speed: 20.0, explosionRange: 200.0, explosionDamage: 5)
+        // Limit scene to 1 bomb
+        if mActiveBombs.count <= 0
+        {
+            SpawnBomb(at: pos, speed: 20.0, explosionRange: 200.0, explosionDamage: 5)
+        }
         
     }
     
