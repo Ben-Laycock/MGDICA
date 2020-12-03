@@ -22,8 +22,8 @@ class GameOverScene: SKScene
         
     let mGameOverTitleLabel = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
     
-    let mPlayAgainButton = SKSpriteNode(imageNamed: "Mine")
-    let mMainMenuButton = SKSpriteNode(imageNamed: "Virus")
+    let mPlayAgainButton = SKSpriteNode(imageNamed: "PlayAgainButton")
+    let mMainMenuButton = SKSpriteNode(imageNamed: "MainMenuButton")
     
     var mHasCompleteSetup = false
     
@@ -42,12 +42,12 @@ class GameOverScene: SKScene
         
         mPlayAgainButton.name = "PlayAgainButton"
         mPlayAgainButton.position = CGPoint(x: 200, y: mScreenHeight - mScreenHeight / 4)
-        mPlayAgainButton.size = SKTexture(imageNamed: "Mine").size() * 0.3
+        mPlayAgainButton.size = SKTexture(imageNamed: "PlayAgainButton").size() * 0.3
         addChild(mPlayAgainButton)
         
         mMainMenuButton.name = "MainMenuButton"
         mMainMenuButton.position = CGPoint(x: 200, y: (mScreenHeight / 2) - mScreenHeight / 4)
-        mMainMenuButton.size = SKTexture(imageNamed: "Virus").size() * 0.3
+        mMainMenuButton.size = SKTexture(imageNamed: "MainMenuButton").size() * 0.3
         addChild(mMainMenuButton)
      
         mHasCompleteSetup = true
@@ -110,7 +110,6 @@ class GameOverScene: SKScene
     {
         
         // Code called each frame before rendering
-        print(Float.random(in: 1.0...100.0))
         
     }
     

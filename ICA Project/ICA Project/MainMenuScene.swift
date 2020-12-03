@@ -21,8 +21,8 @@ class MainMenuScene: SKScene
         
     let mMainMenuTitleLabel = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
     
-    let mPlayButton = SKSpriteNode(imageNamed: "Mine")
-    let mOptionsButton = SKSpriteNode(imageNamed: "Mine")
+    let mPlayButton = SKSpriteNode(imageNamed: "PlayButton")
+    let mOptionsButton = SKSpriteNode(imageNamed: "InfoButton")
     
     var mHasCompleteSetup = false
     
@@ -41,12 +41,12 @@ class MainMenuScene: SKScene
         
         mPlayButton.name = "PlayButton"
         mPlayButton.position = CGPoint(x: 200, y: mScreenHeight - mScreenHeight / 4)
-        mPlayButton.size = SKTexture(imageNamed: "Mine").size() * 0.3
+        mPlayButton.size = SKTexture(imageNamed: "PlayButton").size() * 0.3
         addChild(mPlayButton)
         
         mOptionsButton.name = "OptionsButton"
         mOptionsButton.position = CGPoint(x: 200, y: (mScreenHeight / 2) - mScreenHeight / 4)
-        mOptionsButton.size = SKTexture(imageNamed: "Mine").size() * 0.3
+        mOptionsButton.size = SKTexture(imageNamed: "InfoButton").size() * 0.3
         addChild(mOptionsButton)
      
         mHasCompleteSetup = true

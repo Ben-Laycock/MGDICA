@@ -201,6 +201,12 @@ class GameScene: SKScene
         // Accelerometer
         if let accelerometer = mMotionManager.accelerometerData
         {
+            if abs(accelerometer.acceleration.z) > 2.0
+            {
+                print("Shake \(Float.random(in: 1.0...100.0))")
+                // What should happen when the device is shaken?
+            }
+            
             //print("A  X: " + String(accelerometer.acceleration.x) + "     Y: " + String(accelerometer.acceleration.y) + "     Z: " + String(accelerometer.acceleration.z))
             //physicsWorld.gravity = CGVector(dx: accelerometer.acceleration.y * -50, dy: accelerometer.acceleration.x*50)
         }
@@ -208,6 +214,7 @@ class GameScene: SKScene
         // Gyroscope
         if let gyroscope = mMotionManager.gyroData
         {
+            let gyroVector = CGVector(dx: gyroscope.rotationRate.x, dy: gyroscope.rotationRate.y)
             //print("G  X: " + String(gyroscope.rotationRate.x) + "     Y: " + String(gyroscope.rotationRate.y) + "     Z: " + String(gyroscope.rotationRate.z))
         }
         
