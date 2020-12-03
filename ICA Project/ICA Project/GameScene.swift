@@ -213,15 +213,19 @@ class GameScene: SKScene
                 // Push viruses to edge of the screen
             }
             
+            let newGyroVector = CGVector(dx: -accelerometer.acceleration.y, dy: accelerometer.acceleration.x)
+            
+            gyroVector = newGyroVector.Norm()
+            
             //print("A  X: " + String(accelerometer.acceleration.x) + "     Y: " + String(accelerometer.acceleration.y) + "     Z: " + String(accelerometer.acceleration.z))
         }
         
         // Gyroscope
         if let gyroscope = mMotionManager.gyroData
         {
-            let newGyroVector = CGVector(dx: gyroscope.rotationRate.x, dy: gyroscope.rotationRate.y)
+            //let newGyroVector = CGVector(dx: gyroscope.rotationRate.x, dy: gyroscope.rotationRate.y)
             
-            gyroVector = newGyroVector.Norm()
+            //gyroVector = newGyroVector.Norm()
 
             
             //print("G  X: " + String(gyroscope.rotationRate.x) + "     Y: " + String(gyroscope.rotationRate.y) + "     Z: " + String(gyroscope.rotationRate.z))
@@ -273,7 +277,7 @@ class GameScene: SKScene
         // Bombs
         for bomb in mInactiveBombs
         {
-            bomb.mMovementDirection = bomb.mMovementDirection + gyroVector
+            bomb.mMovementDirection = gyroVector
             bomb.mIsAlive = false // Inactive bombs shouldn't be alive
             bomb.Update()
         }
@@ -281,7 +285,7 @@ class GameScene: SKScene
         for bomb in mActiveBombs
         {
             // Manage current active bombs
-            bomb.mMovementDirection = bomb.mMovementDirection + gyroVector
+            bomb.mMovementDirection = gyroVector
             bomb.Update()
             //bomb.run(resizeVirus)
         }
@@ -293,7 +297,7 @@ class GameScene: SKScene
         // Limit scene to 1 bomb
         if mActiveBombs.count <= 0
         {
-            SpawnBomb(at: pos, speed: 20.0, explosionRange: 200.0, explosionDamage: 5)
+            SpawnBomb(at: pos, speed: 200.0, explosionRange: 200.0, explosionDamage: 5)
         }
         
     }
