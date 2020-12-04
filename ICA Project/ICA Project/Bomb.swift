@@ -55,7 +55,8 @@ class Bomb : SKSpriteNode
     
     func MoveBomb()
     {
-        self.physicsBody?.velocity = mMovementDirection * CGFloat(mMovementSpeed)
+        //self.physicsBody?.velocity = mMovementDirection * CGFloat(mMovementSpeed)
+        self.physicsBody?.applyImpulse(mMovementDirection * CGFloat(mMovementSpeed))
     }
     
 }

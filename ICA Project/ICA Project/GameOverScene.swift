@@ -21,9 +21,13 @@ class GameOverScene: SKScene
     let mScreenHeight = UIScreen.main.bounds.height
         
     let mGameOverTitleLabel = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
+    let mScoreLabel = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
     
     let mPlayAgainButton = SKSpriteNode(imageNamed: "PlayAgainButton")
     let mMainMenuButton = SKSpriteNode(imageNamed: "MainMenuButton")
+    
+    // Players score from most recent game
+    var mScoreFromLastGame = 0
     
     var mHasCompleteSetup = false
     
@@ -35,16 +39,25 @@ class GameOverScene: SKScene
            return
         }
         
+        // Game over label
         mGameOverTitleLabel.position = CGPoint(x: mScreenWidth / 2, y: mScreenHeight / 2)
         mGameOverTitleLabel.text = "Game Over"
         mGameOverTitleLabel.fontSize = 48
         addChild(mGameOverTitleLabel)
         
+        // Score label
+        mScoreLabel.position = CGPoint(x: mScreenWidth / 2, y: mScreenHeight / 2 - 100)
+        mScoreLabel.text = "Score: \(mScoreFromLastGame)"
+        mScoreLabel.fontSize = 48
+        addChild(mScoreLabel)
+        
+        // Play again button
         mPlayAgainButton.name = "PlayAgainButton"
         mPlayAgainButton.position = CGPoint(x: 200, y: mScreenHeight - mScreenHeight / 4)
         mPlayAgainButton.size = SKTexture(imageNamed: "PlayAgainButton").size() * 0.3
         addChild(mPlayAgainButton)
         
+        // Main menu button
         mMainMenuButton.name = "MainMenuButton"
         mMainMenuButton.position = CGPoint(x: 200, y: (mScreenHeight / 2) - mScreenHeight / 4)
         mMainMenuButton.size = SKTexture(imageNamed: "MainMenuButton").size() * 0.3
@@ -110,6 +123,7 @@ class GameOverScene: SKScene
     {
         
         // Code called each frame before rendering
+        mScoreLabel.text = "Score: \(mScoreFromLastGame)"
         
     }
     

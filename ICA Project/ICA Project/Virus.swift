@@ -19,7 +19,8 @@ class Virus : SKSpriteNode
     var mMovementSpeed : Float
     var mIsAlive = false
     var mTargetPosition = CGPoint.zero
-    var mDamageRange = 20.0
+    var mDamageRange : CGFloat = CGFloat(20.0)
+    var mTimeSpawned : Double = Double(0)
     
     init(texture: SKTexture!, color: UIColor, size: CGSize, health: Int, movementSpeed : Float)
     {

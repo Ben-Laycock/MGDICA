@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B50709F9257AC21A000DED42 /* VirusDestruction.sks in Resources */ = {isa = PBXBuildFile; fileRef = B50709F8257AC21A000DED42 /* VirusDestruction.sks */; };
+		B514657D257A884A0013CD4E /* Explosion.sks in Resources */ = {isa = PBXBuildFile; fileRef = B514657C257A884A0013CD4E /* Explosion.sks */; };
 		B52F48A125757F2A00B043DF /* Virus.swift in Sources */ = {isa = PBXBuildFile; fileRef = B52F48A025757F2A00B043DF /* Virus.swift */; };
 		B5A4FDEB25779FFA00B89EBC /* CGVectorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5A4FDEA25779FFA00B89EBC /* CGVectorExtensions.swift */; };
 		B5A4FDED2577A02300B89EBC /* CGSizeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5A4FDEC2577A02300B89EBC /* CGSizeExtensions.swift */; };
@@ -51,6 +53,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B50709F8257AC21A000DED42 /* VirusDestruction.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = VirusDestruction.sks; sourceTree = "<group>"; };
+		B514657C257A884A0013CD4E /* Explosion.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Explosion.sks; sourceTree = "<group>"; };
 		B52F48A025757F2A00B043DF /* Virus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Virus.swift; sourceTree = "<group>"; };
 		B5A4FDEA25779FFA00B89EBC /* CGVectorExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGVectorExtensions.swift; sourceTree = "<group>"; };
 		B5A4FDEC2577A02300B89EBC /* CGSizeExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGSizeExtensions.swift; sourceTree = "<group>"; };
@@ -145,6 +149,8 @@
 				DBF79F142554450B00199755 /* GameScene.sks */,
 				DBF79F162554450B00199755 /* Actions.sks */,
 				DBF79F182554450B00199755 /* GameScene.swift */,
+				B514657C257A884A0013CD4E /* Explosion.sks */,
+				B50709F8257AC21A000DED42 /* VirusDestruction.sks */,
 				B5DEA9D725783971001533CA /* UIViewExtensions.swift */,
 				B52F48A025757F2A00B043DF /* Virus.swift */,
 				B5DEA9CF2577F5B4001533CA /* Bomb.swift */,
@@ -295,8 +301,10 @@
 				DBF79F152554450B00199755 /* GameScene.sks in Resources */,
 				B5DEA9DA25784183001533CA /* GameOverScene.sks in Resources */,
 				DBF79F202554450D00199755 /* Assets.xcassets in Resources */,
+				B50709F9257AC21A000DED42 /* VirusDestruction.sks in Resources */,
 				DBF79F232554450D00199755 /* LaunchScreen.storyboard in Resources */,
 				DBF79F172554450B00199755 /* Actions.sks in Resources */,
+				B514657D257A884A0013CD4E /* Explosion.sks in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
