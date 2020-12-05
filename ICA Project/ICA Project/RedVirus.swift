@@ -1,8 +1,8 @@
 //
-//  VirusTest.swift
+//  RedVirus.swift
 //  ICA Project
 //
-//  Created by Ben on 30/11/2020.
+//  Created by Ben on 05/12/2020.
 //  Copyright © 2020 LAYCOCK, BEN (Student). All rights reserved.
 //
 
@@ -12,7 +12,7 @@ import GameplayKit
 import CoreMotion
 
 
-class Virus : SKSpriteNode
+class RedVirus : SKSpriteNode
 {
     
     var mHealth : Int = 0
@@ -41,7 +41,7 @@ class Virus : SKSpriteNode
         }
         
         // What should be done if alive?
-        MoveToTarget(at: mTarget, precision: 20.0)
+        MoveToTarget(at: mTarget, precision: 100.0)
     }
     
     

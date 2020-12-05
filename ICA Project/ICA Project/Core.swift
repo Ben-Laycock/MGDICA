@@ -16,7 +16,6 @@ class Core : SKSpriteNode
 {
 
     var mHealth : Int
-    var mIsDestroyed = false
     
     init(texture: SKTexture!, color: UIColor, size: CGSize, health: Int)
     {
@@ -36,16 +35,28 @@ class Core : SKSpriteNode
     
     func Update()
     {
-        
-        if !mIsDestroyed
+        if IsDead()
         {
             
-        }
-        else
-        {
-            self.position = CGPoint(x: -1000.0, y: -1000.0)
+            return
         }
         
+        // What should be done if alive?
+        
+    }
+    
+    
+    // Decreases health by given amount
+    func DecreaseHealth(by amount: Int)
+    {
+        self.mHealth -= amount;
+    }
+    
+    
+    // Returns true if dead (else false)
+    func IsDead() -> (Bool)
+    {
+        return mHealth <= 0
     }
     
 }

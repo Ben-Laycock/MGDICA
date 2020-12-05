@@ -10,6 +10,7 @@ import SpriteKit
 
 extension CGVector
 {
+    
     static func *(_ cg: CGVector, _ m: CGFloat) -> (CGVector)
     {
         return CGVector(dx: cg.dx * m, dy: cg.dy * m)
@@ -28,6 +29,12 @@ extension CGVector
     static func -(_ a: CGVector, _ b: CGVector) -> (CGVector)
     {
         return CGVector(dx: a.dx - b.dx, dy: a.dy - b.dy)
+    }
+    
+    static func Dist(_ a: CGPoint, _ b: CGPoint) -> (CGFloat)
+    {
+        let v = a.ToVector() - b.ToVector()
+        return v.Mag()
     }
     
     func Mag() -> (CGFloat)
@@ -52,8 +59,10 @@ extension CGVector
             return
         }
         
-        dx /= Mag()
-        dy /= Mag()
+        let m = Mag()
+        
+        dx /= m
+        dy /= m
     }
     
     func ToPoint() -> (CGPoint)

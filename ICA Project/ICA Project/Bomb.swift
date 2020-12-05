@@ -14,7 +14,10 @@ import CoreMotion
 
 class Bomb : SKSpriteNode
 {
-
+    
+    var mScreenWidth : CGFloat = 0.0
+    var mScreenHeight : CGFloat = 0.0
+    
     var mMovementSpeed : Float
     var mExplosionRadius : Float
     var mExplosionDamage : Int
@@ -57,6 +60,33 @@ class Bomb : SKSpriteNode
     {
         //self.physicsBody?.velocity = mMovementDirection * CGFloat(mMovementSpeed)
         self.physicsBody?.applyImpulse(mMovementDirection * CGFloat(mMovementSpeed))
+        
+        LockToScreen()
+    }
+    
+    func LockToScreen()
+    {
+        if Int(position.x) > Int(mScreenWidth - size.width / 2)
+        {
+            position.x = mScreenWidth - size.width / 2
+            self.physicsBody?.velocity.dx = 0
+        }
+        if position.x < size.width/2
+        {
+            position.x = size.width/2
+            self.physicsBody?.velocity.dx = 0
+        }
+        
+        if position.y > mScreenHeight - size.height / 2
+        {
+            position.y = mScreenHeight - size.height / 2
+            self.physicsBody?.velocity.dy = 0
+        }
+        if position.y < size.height / 2
+        {
+            position.y = size.height / 2
+            self.physicsBody?.velocity.dy = 0
+        }
     }
     
 }

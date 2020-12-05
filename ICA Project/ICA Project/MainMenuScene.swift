@@ -21,8 +21,17 @@ class MainMenuScene: SKScene
         
     let mMainMenuTitleLabel = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
     
+    // Main Menu
     let mPlayButton = SKSpriteNode(imageNamed: "PlayButton")
-    let mOptionsButton = SKSpriteNode(imageNamed: "InfoButton")
+    let mInfoButton = SKSpriteNode(imageNamed: "InfoButton")
+    
+    // Info Menu
+    let mBackButton = SKSpriteNode(imageNamed: "InfoButton")
+    let mVirusImage = SKSpriteNode(imageNamed: "Virus")
+    var mRedVirusImage = SKSpriteNode(imageNamed: "RedVirus")
+    var mBombImage = SKSpriteNode(imageNamed: "Mine")
+    var mPillImage = SKSpriteNode(imageNamed: "Pill")
+    var mCoreImage = SKSpriteNode(imageNamed: "Core")
     
     var mHasCompleteSetup = false
     
@@ -34,6 +43,7 @@ class MainMenuScene: SKScene
            return
         }
         
+        // Main menu setup
         mMainMenuTitleLabel.position = CGPoint(x: mScreenWidth / 2, y: mScreenHeight / 2)
         mMainMenuTitleLabel.text = "Main Menu"
         mMainMenuTitleLabel.fontSize = 48
@@ -44,11 +54,46 @@ class MainMenuScene: SKScene
         mPlayButton.size = SKTexture(imageNamed: "PlayButton").size() * 0.3
         addChild(mPlayButton)
         
-        mOptionsButton.name = "OptionsButton"
-        mOptionsButton.position = CGPoint(x: 200, y: (mScreenHeight / 2) - mScreenHeight / 4)
-        mOptionsButton.size = SKTexture(imageNamed: "InfoButton").size() * 0.3
-        addChild(mOptionsButton)
+        mInfoButton.name = "InfoButton"
+        mInfoButton.position = CGPoint(x: 200, y: (mScreenHeight / 2) - mScreenHeight / 4)
+        mInfoButton.size = SKTexture(imageNamed: "InfoButton").size() * 0.3
+        addChild(mInfoButton)
      
+        // Info menu setup
+        mBackButton.name = "BackButton"
+        mBackButton.position = CGPoint(x: 10 + SKTexture(imageNamed: "InfoButton").size().width / 2,
+                                       y: mScreenHeight - 10 - SKTexture(imageNamed: "InfoButton").size().height / 2)
+        mBackButton.size = SKTexture(imageNamed: "InfoButton").size() * 0.3
+        addChild(mBackButton)
+        
+        mVirusImage.name = "VirusImage"
+        mVirusImage.position = CGPoint(x: mScreenWidth / 3, y: mScreenHeight / 6)
+        mVirusImage.size = SKTexture(imageNamed: "Virus").size() * 0.3
+        addChild(mVirusImage)
+        
+        mRedVirusImage.name = "RedVirusImage"
+        mRedVirusImage.position = CGPoint(x: mScreenWidth / 3, y: mScreenHeight / 6 * 2)
+        mRedVirusImage.size = SKTexture(imageNamed: "RedVirus").size() * 0.3
+        addChild(mRedVirusImage)
+        
+        mBombImage.name = "BombImage"
+        mBombImage.position = CGPoint(x: mScreenWidth / 3, y: mScreenHeight / 6 * 3)
+        mBombImage.size = SKTexture(imageNamed: "Mine").size() * 0.3
+        addChild(mBombImage)
+        
+        mPillImage.name = "PillImage"
+        mPillImage.position = CGPoint(x: mScreenWidth / 3, y: mScreenHeight / 6 * 4)
+        mPillImage.size = SKTexture(imageNamed: "Pill").size() * 0.3
+        addChild(mPillImage)
+        
+        mCoreImage.name = "CoreImage"
+        mCoreImage.position = CGPoint(x: mScreenWidth / 3, y: mScreenHeight / 6 * 5)
+        mCoreImage.size = SKTexture(imageNamed: "Core").size() * 0.2
+        addChild(mCoreImage)
+        
+        // Disable info menu
+        ToggleInfoMenu()
+        
         mHasCompleteSetup = true
         
     }
@@ -80,9 +125,16 @@ class MainMenuScene: SKScene
                 loadScene()
             }
             
-            if node.name == "OptionsButton"
+            if node.name == "InfoButton"
             {
-                
+                ToggleMainMenu()
+                ToggleInfoMenu()
+            }
+            
+            if node.name == "BackButton"
+            {
+                ToggleInfoMenu()
+                ToggleMainMenu()
             }
         }
         
@@ -97,9 +149,23 @@ class MainMenuScene: SKScene
     override func update(_ currentTime: TimeInterval)
     {
         
-        // Code called each frame before rendering
-        
-        
+    }
+    
+    func ToggleMainMenu()
+    {
+        mMainMenuTitleLabel.isHidden = !mMainMenuTitleLabel.isHidden
+        mPlayButton.isHidden = !mPlayButton.isHidden
+        mInfoButton.isHidden = !mInfoButton.isHidden
+    }
+    
+    func ToggleInfoMenu()
+    {
+        mBackButton.isHidden = !mBackButton.isHidden
+        mVirusImage.isHidden = !mVirusImage.isHidden
+        mRedVirusImage.isHidden = !mRedVirusImage.isHidden
+        mBombImage.isHidden = !mBombImage.isHidden
+        mPillImage.isHidden = !mPillImage.isHidden
+        mCoreImage.isHidden = !mCoreImage.isHidden
     }
     
 }
