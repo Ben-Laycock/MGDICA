@@ -22,6 +22,7 @@ class GameOverScene: SKScene
         
     let mGameOverTitleLabel = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
     let mScoreLabel = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
+    let mHighScoreLabel = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
     
     let mPlayAgainButton = SKSpriteNode(imageNamed: "PlayAgainButton")
     let mMainMenuButton = SKSpriteNode(imageNamed: "MainMenuButton")
@@ -29,10 +30,23 @@ class GameOverScene: SKScene
     // Players score from most recent game
     var mScoreFromLastGame = 0
     
+    // Highest saved score
+    var mSavedHighScore = 0
+    
+    let savedData = UserDefaults.standard
+    
     var mHasCompleteSetup = false
     
     override func didMove(to view: SKView)
     {
+        
+        mSavedHighScore = savedData.integer(forKey: "HighScore")
+        
+        if mScoreFromLastGame > mSavedHighScore
+        {
+            mSavedHighScore = mScoreFromLastGame
+            savedData.set(mScoreFromLastGame, forKey: "HighScore")
+        }
         
         if mHasCompleteSetup
         {
@@ -40,16 +54,22 @@ class GameOverScene: SKScene
         }
         
         // Game over label
-        mGameOverTitleLabel.position = CGPoint(x: mScreenWidth / 2, y: mScreenHeight / 2)
+        mGameOverTitleLabel.position = CGPoint(x: mScreenWidth / 3 * 2, y: mScreenHeight / 4 * 3)
         mGameOverTitleLabel.text = "Game Over"
         mGameOverTitleLabel.fontSize = 48
         addChild(mGameOverTitleLabel)
         
         // Score label
-        mScoreLabel.position = CGPoint(x: mScreenWidth / 2, y: mScreenHeight / 2 - 100)
+        mScoreLabel.position = CGPoint(x: mScreenWidth / 3 * 2, y: mScreenHeight / 4)
         mScoreLabel.text = "Score: \(mScoreFromLastGame)"
         mScoreLabel.fontSize = 48
         addChild(mScoreLabel)
+        
+        // High Score label
+        mHighScoreLabel.position = CGPoint(x: mScreenWidth / 3 * 2, y: mScreenHeight / 4 * 2)
+        mHighScoreLabel.text = "High Score: \(mSavedHighScore)"
+        mHighScoreLabel.fontSize = 48
+        addChild(mHighScoreLabel)
         
         // Play again button
         mPlayAgainButton.name = "PlayAgainButton"

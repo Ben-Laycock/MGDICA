@@ -27,6 +27,7 @@ class GameScene: SKScene
     let mVirusTexture = SKTexture(imageNamed: "Virus")
     let mBombTexture = SKTexture(imageNamed: "Mine")
     let mCoreTexture = SKTexture(imageNamed: "Core")
+    let mBoomTexture = SKTexture(imageNamed: "BOOM")
     
     // Viruses
     let mNumOfViruses = 50
@@ -67,10 +68,9 @@ class GameScene: SKScene
     // Device Motion
     let mMotionManager = CMMotionManager()
     // Accelerometer
-    var accelerationThreshold = 2.0
+    var mAccelerationThreshold = 2.0
     // Gyroscope variables
-    var gyroVector = CGVector.zero
-    var gyroChangePrecision = CGFloat(0.2)
+    var mAccelerometerVector = CGVector.zero
     
     // Particles
     let explosionParticles = SKEmitterNode(fileNamed: "Explosion.sks")
@@ -79,7 +79,8 @@ class GameScene: SKScene
     // Sounds
     let beepSound = SKAction.playSoundFileNamed("Sounds/Beep.mp3", waitForCompletion: true)
     
-    var swipeGR = UISwipeGestureRecognizer()
+    var swipeRightGR : UISwipeGestureRecognizer!
+    var swipeLeftGR : UISwipeGestureRecognizer!
     
     var mHasCompleteSetup = false
     
@@ -90,6 +91,14 @@ class GameScene: SKScene
         {
            return
         }
+        
+        swipeRightGR = UISwipeGestureRecognizer(target: self, action: #selector(manageSwipe))
+        swipeRightGR.direction = .right
+        self.view?.addGestureRecognizer(swipeRightGR)
+        
+        swipeLeftGR = UISwipeGestureRecognizer(target: self, action: #selector(manageSwipe))
+        swipeLeftGR.direction = .left
+        self.view?.addGestureRecognizer(swipeLeftGR)
         
         // Setup Core
         mCore = Core(texture: mCoreTexture, color: UIColor.clear, size: mCoreTexture.size(), health: mCoreStartingHealth)
@@ -135,6 +144,19 @@ class GameScene: SKScene
     
         mHasCompleteSetup = true
         
+    }
+    
+    
+    @objc func manageSwipe(gesture: UISwipeGestureRecognizer)
+    {
+        switch gesture.direction {
+        case .right:
+            print("Right")
+        case .left:
+            print("Left")
+        default:
+            return
+        }
     }
     
     
@@ -253,16 +275,16 @@ class GameScene: SKScene
         // Accelerometer
         if let accelerometer = mMotionManager.accelerometerData
         {
-            if abs(accelerometer.acceleration.z) > accelerationThreshold
+            if abs(accelerometer.acceleration.z) > mAccelerationThreshold
             {
                 print("Shake \(Float.random(in: 1.0...100.0))")
                 // What should happen when the device is shaken?
                 // Push viruses to edge of the screen
             }
             
-            let newGyroVector = CGVector(dx: -accelerometer.acceleration.y, dy: accelerometer.acceleration.x)
+            let newAccelerometerVector = CGVector(dx: -accelerometer.acceleration.y, dy: accelerometer.acceleration.x)
             
-            gyroVector = newGyroVector.Norm()
+            mAccelerometerVector = newAccelerometerVector.Norm()
         }
         
         
@@ -275,7 +297,7 @@ class GameScene: SKScene
             loadGameOverScene()
         }
 
-        
+    
         // Update viruses
         for virus in mInactiveViruses
         {
@@ -297,7 +319,7 @@ class GameScene: SKScene
             
             if virus.IsDead()
             {
-                addParticle(pos: virus.position, particle: virusDeathParticles!)
+                //addParticle(pos: virus.position, particle: virusDeathParticles!)
                 mActiveViruses.remove(virus)
                 mInactiveViruses.insert(virus)
             }
@@ -313,7 +335,7 @@ class GameScene: SKScene
         // Bombs
         for bomb in mInactiveBombs
         {
-            bomb.mMovementDirection = gyroVector
+            bomb.mMovementDirection = mAccelerometerVector
             bomb.mIsAlive = false // Inactive bombs shouldn't be alive
             bomb.Update()
         }
@@ -321,13 +343,17 @@ class GameScene: SKScene
         for bomb in mActiveBombs
         {
             // Manage current active bombs
-            bomb.mMovementDirection = gyroVector
+            bomb.mMovementDirection = mAccelerometerVector
             bomb.Update()
         }
         
         // Random spawning of viruses
-        var pos = CGPoint(x: CGFloat(Float.random(in: 1.0...Float(mScreenWidth))), y: CGFloat(Float.random(in: 1.0...Float(mScreenHeight))))
+        let randomSide = Int.random(in: 0...1)
+        let randomPosY = Float.random(in: 1.0...Float(mScreenHeight))
+        let posX = randomSide == 0 ? -mVirusTexture.size().width : mScreenWidth + mVirusTexture.size().width
  
+        var pos = CGPoint(x: posX, y: CGFloat(randomPosY))
+        
         if mActiveViruses.count <= 5
         {
             SpawnVirus(at: pos, health: 1, speed: 50.0, currentTime: currentTime)
@@ -347,8 +373,7 @@ class GameScene: SKScene
     }
     
     
-    func CreateVirus(texture tex: SKTexture,
-                     health h: Int,
+    func CreateVirus(health h: Int,
                      movementSpeed mS: Float) -> (Virus)
     {
         let newVirus = Virus(imageNamed: "Virus")
@@ -370,6 +395,29 @@ class GameScene: SKScene
         
         inactiveVirus?.position = p
         inactiveVirus?.Setup(health: h, speed: s, timeSpawned: t, damage: 1)
+        
+    }
+    
+    func SetupViruses()
+    {
+        
+        for _ in 1...mNumOfViruses
+        {
+            // Start viruses with 0 health (Assign health later)
+            let newVirus = CreateVirus(health: 0, movementSpeed: 20.0)
+            
+            mInactiveViruses.insert(newVirus)
+            
+            newVirus.position = CGPoint(x: mScreenWidth - 100.0, y: mScreenHeight / 2)
+            newVirus.size = CGSize(width: mVirusTexture.size().width, height: mVirusTexture.size().height) * 0.2
+            newVirus.physicsBody = SKPhysicsBody(circleOfRadius: mVirusTexture.size().width)
+            newVirus.physicsBody?.affectedByGravity = false
+            newVirus.physicsBody?.collisionBitMask = 0x0
+
+            newVirus.SetTarget(target: mCore.position)
+            
+            addChild(newVirus)
+        }
         
     }
     
@@ -410,29 +458,6 @@ class GameScene: SKScene
         
     }
     
-    
-    func SetupViruses()
-    {
-        
-        for _ in 1...mNumOfViruses
-        {
-            // Start viruses with 0 health (Assign health later)
-            let newVirus = CreateVirus(texture: mVirusTexture, health: 0, movementSpeed: 20.0)
-            
-            mInactiveViruses.insert(newVirus)
-            
-            newVirus.position = CGPoint(x: mScreenWidth - 100.0, y: mScreenHeight / 2)
-            newVirus.size = CGSize(width: mVirusTexture.size().width, height: mVirusTexture.size().height) * 0.2
-            newVirus.physicsBody = SKPhysicsBody(circleOfRadius: mVirusTexture.size().width)
-            newVirus.physicsBody?.affectedByGravity = false
-            newVirus.physicsBody?.collisionBitMask = 0x0
-
-            newVirus.SetTarget(target: mCore.position)
-            
-            addChild(newVirus)
-        }
-        
-    }
     
     func SetupBombs()
     {

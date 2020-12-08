@@ -26,12 +26,18 @@ class MainMenuScene: SKScene
     let mInfoButton = SKSpriteNode(imageNamed: "InfoButton")
     
     // Info Menu
-    let mBackButton = SKSpriteNode(imageNamed: "InfoButton")
+    let mBackButton = SKSpriteNode(imageNamed: "CancelButton")
     let mVirusImage = SKSpriteNode(imageNamed: "Virus")
-    var mRedVirusImage = SKSpriteNode(imageNamed: "RedVirus")
-    var mBombImage = SKSpriteNode(imageNamed: "Mine")
-    var mPillImage = SKSpriteNode(imageNamed: "Pill")
-    var mCoreImage = SKSpriteNode(imageNamed: "Core")
+    let mRedVirusImage = SKSpriteNode(imageNamed: "RedVirus")
+    let mBombImage = SKSpriteNode(imageNamed: "Mine")
+    let mPillImage = SKSpriteNode(imageNamed: "Pill")
+    let mCoreImage = SKSpriteNode(imageNamed: "Core")
+    
+    let mVirusInfo = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
+    let mRedVirusInfo = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
+    let mBombInfo = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
+    let mPillInfo = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
+    let mCoreInfo = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
     
     var mHasCompleteSetup = false
     
@@ -50,46 +56,89 @@ class MainMenuScene: SKScene
         addChild(mMainMenuTitleLabel)
         
         mPlayButton.name = "PlayButton"
-        mPlayButton.position = CGPoint(x: 200, y: mScreenHeight - mScreenHeight / 4)
+        mPlayButton.position = CGPoint(x: 10 + SKTexture(imageNamed: "PlayButton").size().width / 2,
+                                       y: mScreenHeight / 6 * 4)
         mPlayButton.size = SKTexture(imageNamed: "PlayButton").size() * 0.3
         addChild(mPlayButton)
         
         mInfoButton.name = "InfoButton"
-        mInfoButton.position = CGPoint(x: 200, y: (mScreenHeight / 2) - mScreenHeight / 4)
+        mInfoButton.position = CGPoint(x: 10 + SKTexture(imageNamed: "PlayButton").size().width / 2,
+                                       y: mScreenHeight / 6 * 2)
         mInfoButton.size = SKTexture(imageNamed: "InfoButton").size() * 0.3
         addChild(mInfoButton)
      
+        
         // Info menu setup
         mBackButton.name = "BackButton"
-        mBackButton.position = CGPoint(x: 10 + SKTexture(imageNamed: "InfoButton").size().width / 2,
-                                       y: mScreenHeight - 10 - SKTexture(imageNamed: "InfoButton").size().height / 2)
-        mBackButton.size = SKTexture(imageNamed: "InfoButton").size() * 0.3
+        mBackButton.position = CGPoint(x: 10 + SKTexture(imageNamed: "PlayButton").size().width / 2,
+                                       y: mScreenHeight / 6 * 5)
+        mBackButton.size = SKTexture(imageNamed: "CancelButton").size() * 0.3
         addChild(mBackButton)
         
+        // Virus
         mVirusImage.name = "VirusImage"
         mVirusImage.position = CGPoint(x: mScreenWidth / 3, y: mScreenHeight / 6)
         mVirusImage.size = SKTexture(imageNamed: "Virus").size() * 0.3
         addChild(mVirusImage)
         
+        mVirusInfo.position = CGPoint(x: mScreenWidth / 3 + 75, y: mScreenHeight / 6)
+        mVirusInfo.horizontalAlignmentMode = .left
+        mVirusInfo.verticalAlignmentMode = .center
+        mVirusInfo.text = "Virus: Click to destroy"
+        mVirusInfo.fontSize = 24
+        addChild(mVirusInfo)
+        
+        // Red Virus
         mRedVirusImage.name = "RedVirusImage"
         mRedVirusImage.position = CGPoint(x: mScreenWidth / 3, y: mScreenHeight / 6 * 2)
         mRedVirusImage.size = SKTexture(imageNamed: "RedVirus").size() * 0.3
         addChild(mRedVirusImage)
         
+        mRedVirusInfo.position = CGPoint(x: mScreenWidth / 3 + 75, y: mScreenHeight / 6 * 2)
+        mRedVirusInfo.horizontalAlignmentMode = .left
+        mRedVirusInfo.verticalAlignmentMode = .center
+        mRedVirusInfo.text = "Red Virus: Swipe them away from the core"
+        mRedVirusInfo.fontSize = 24
+        addChild(mRedVirusInfo)
+        
+        // Bomb
         mBombImage.name = "BombImage"
         mBombImage.position = CGPoint(x: mScreenWidth / 3, y: mScreenHeight / 6 * 3)
         mBombImage.size = SKTexture(imageNamed: "Mine").size() * 0.3
         addChild(mBombImage)
         
+        mBombInfo.position = CGPoint(x: mScreenWidth / 3 + 75, y: mScreenHeight / 6 * 3)
+        mBombInfo.horizontalAlignmentMode = .left
+        mBombInfo.verticalAlignmentMode = .center
+        mBombInfo.text = "Bomb: Click to destroy all nearby viruses"
+        mBombInfo.fontSize = 24
+        addChild(mBombInfo)
+        
+        // Pill
         mPillImage.name = "PillImage"
         mPillImage.position = CGPoint(x: mScreenWidth / 3, y: mScreenHeight / 6 * 4)
         mPillImage.size = SKTexture(imageNamed: "Pill").size() * 0.3
         addChild(mPillImage)
         
+        mPillInfo.position = CGPoint(x: mScreenWidth / 3 + 75, y: mScreenHeight / 6 * 4)
+        mPillInfo.horizontalAlignmentMode = .left
+        mPillInfo.verticalAlignmentMode = .center
+        mPillInfo.text = "Pill: Drag to the core to heal it"
+        mPillInfo.fontSize = 24
+        addChild(mPillInfo)
+        
+        // Core
         mCoreImage.name = "CoreImage"
         mCoreImage.position = CGPoint(x: mScreenWidth / 3, y: mScreenHeight / 6 * 5)
         mCoreImage.size = SKTexture(imageNamed: "Core").size() * 0.2
         addChild(mCoreImage)
+        
+        mCoreInfo.position = CGPoint(x: mScreenWidth / 3 + 75, y: mScreenHeight / 6 * 5)
+        mCoreInfo.horizontalAlignmentMode = .left
+        mCoreInfo.verticalAlignmentMode = .center
+        mCoreInfo.text = "Core: Protect it from the viruses"
+        mCoreInfo.fontSize = 24
+        addChild(mCoreInfo)
         
         // Disable info menu
         ToggleInfoMenu()
@@ -166,6 +215,12 @@ class MainMenuScene: SKScene
         mBombImage.isHidden = !mBombImage.isHidden
         mPillImage.isHidden = !mPillImage.isHidden
         mCoreImage.isHidden = !mCoreImage.isHidden
+        
+        mVirusInfo.isHidden = !mVirusInfo.isHidden
+        mRedVirusInfo.isHidden = !mRedVirusInfo.isHidden
+        mBombInfo.isHidden = !mBombInfo.isHidden
+        mPillInfo.isHidden = !mPillInfo.isHidden
+        mCoreInfo.isHidden = !mCoreInfo.isHidden
     }
     
 }
