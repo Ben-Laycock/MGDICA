@@ -19,6 +19,8 @@ class RedVirus : SKSpriteNode
     var mMovementSpeed : Float = 0.0
     var mTimeSpawned : Double = 0.0
     var mDamage : Int = 1
+    var mMaxSpeed : CGFloat = 200.0
+    var mCanMoveToTarget : Bool = true
 
     var mTarget : CGPoint = CGPoint.zero
     
@@ -87,7 +89,14 @@ class RedVirus : SKSpriteNode
         
         let finalVector = pT * CGFloat(mMovementSpeed)
         
-        self.physicsBody?.velocity = finalVector
+        self.physicsBody?.applyImpulse(finalVector)
+        
+        if (self.physicsBody?.velocity.Mag())! > mMaxSpeed
+        {
+            self.physicsBody?.velocity = (self.physicsBody?.velocity.Norm())! * mMaxSpeed
+        }
+        
+        //self.physicsBody?.velocity = finalVector
     }
     
 }

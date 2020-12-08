@@ -84,7 +84,7 @@ class MainMenuScene: SKScene
         mVirusInfo.position = CGPoint(x: mScreenWidth / 3 + 75, y: mScreenHeight / 6)
         mVirusInfo.horizontalAlignmentMode = .left
         mVirusInfo.verticalAlignmentMode = .center
-        mVirusInfo.text = "Virus: Click to destroy"
+        mVirusInfo.text = "Virus: Click to destroy / Hit them with bombs"
         mVirusInfo.fontSize = 24
         addChild(mVirusInfo)
         
@@ -97,7 +97,7 @@ class MainMenuScene: SKScene
         mRedVirusInfo.position = CGPoint(x: mScreenWidth / 3 + 75, y: mScreenHeight / 6 * 2)
         mRedVirusInfo.horizontalAlignmentMode = .left
         mRedVirusInfo.verticalAlignmentMode = .center
-        mRedVirusInfo.text = "Red Virus: Swipe them away from the core"
+        mRedVirusInfo.text = "Red Virus: Swipe away / Hit with bombs"
         mRedVirusInfo.fontSize = 24
         addChild(mRedVirusInfo)
         
@@ -110,7 +110,7 @@ class MainMenuScene: SKScene
         mBombInfo.position = CGPoint(x: mScreenWidth / 3 + 75, y: mScreenHeight / 6 * 3)
         mBombInfo.horizontalAlignmentMode = .left
         mBombInfo.verticalAlignmentMode = .center
-        mBombInfo.text = "Bomb: Click to destroy all nearby viruses"
+        mBombInfo.text = "Bomb: Hit viruses to cause an explosion"
         mBombInfo.fontSize = 24
         addChild(mBombInfo)
         
