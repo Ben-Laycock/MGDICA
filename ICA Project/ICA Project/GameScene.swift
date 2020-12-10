@@ -28,6 +28,7 @@ class GameScene: SKScene
     let mRedVirusTexture = SKTexture(imageNamed: "RedVirus")
     let mBombTexture = SKTexture(imageNamed: "Mine")
     let mCoreTexture = SKTexture(imageNamed: "Core")
+    let mPillTexture = SKTexture(imageNamed: "Pill")
     let mBoomTexture = SKTexture(imageNamed: "BOOM")
     
     // Viruses
@@ -44,6 +45,9 @@ class GameScene: SKScene
     let mNumOfBombs = 10
     var mActiveBombs = Set<Bomb>()
     var mInactiveBombs = Set<Bomb>()
+    
+    // Pill
+    var mPillObject : Pill!
     
     // Core
     let mCoreStartingHealth = 20
@@ -99,8 +103,12 @@ class GameScene: SKScene
     */
     
     // Gestures
-    var swipeRightGR : UISwipeGestureRecognizer!
-    var swipeLeftGR : UISwipeGestureRecognizer!
+    var mSwipeRightGR : UISwipeGestureRecognizer!
+    var mSwipeLeftGR : UISwipeGestureRecognizer!
+    let mSwipePointAccuracy : CGFloat = 100.0
+    
+    // Audio System
+    var mAudioSystem : AudioSystem!
     
     var mHasCompleteSetup = false
     
@@ -112,13 +120,15 @@ class GameScene: SKScene
            return
         }
         
-        swipeRightGR = UISwipeGestureRecognizer(target: self, action: #selector(manageSwipe))
-        swipeRightGR.direction = .right
-        self.view?.addGestureRecognizer(swipeRightGR)
+        mSwipeRightGR = UISwipeGestureRecognizer(target: self, action: #selector(manageSwipe))
+        mSwipeRightGR.direction = .right
+        mSwipeRightGR.cancelsTouchesInView = false
+        self.view?.addGestureRecognizer(mSwipeRightGR)
         
-        swipeLeftGR = UISwipeGestureRecognizer(target: self, action: #selector(manageSwipe))
-        swipeLeftGR.direction = .left
-        self.view?.addGestureRecognizer(swipeLeftGR)
+        mSwipeLeftGR = UISwipeGestureRecognizer(target: self, action: #selector(manageSwipe))
+        mSwipeLeftGR.direction = .left
+        mSwipeLeftGR.cancelsTouchesInView = false
+        self.view?.addGestureRecognizer(mSwipeLeftGR)
         
         // Setup Core
         mCore = Core(texture: mCoreTexture, color: UIColor.clear, size: mCoreTexture.size(), health: mCoreStartingHealth)
@@ -135,6 +145,14 @@ class GameScene: SKScene
         
         // Setup Bombs
         SetupBombs()
+        
+        // Setup Pill
+        mPillObject = Pill(imageNamed: "Pill")
+        mPillObject.size = CGSize(width: mPillTexture.size().width, height: mPillTexture.size().height) * 0.4
+        mPillObject.physicsBody = SKPhysicsBody(circleOfRadius: mVirusTexture.size().width)
+        mPillObject.physicsBody?.affectedByGravity = false
+        mPillObject.physicsBody?.collisionBitMask = 0x0
+        addChild(mPillObject)
         
         // Score label
         mScoreLabel.fontSize = 72
@@ -155,6 +173,10 @@ class GameScene: SKScene
         // Start motion manager (Accelerometer)
         mMotionManager.startAccelerometerUpdates()
     
+        // Setup audio system
+        mAudioSystem = AudioSystem()
+        mAudioSystem.Setup()
+        
         mHasCompleteSetup = true
         
     }
@@ -168,7 +190,7 @@ class GameScene: SKScene
         
         for redVirus in mActiveRedViruses
         {
-            if CGVector.Dist(redVirus.position, location) < 50.0
+            if CGVector.Dist(redVirus.position, location) < mSwipePointAccuracy
             {
                 redVirus.physicsBody?.velocity = CGVector.zero
                 if gesture.direction == .right
@@ -187,8 +209,52 @@ class GameScene: SKScene
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?)
     {
         
-        //let sound = Bundle.main.path(forResource: "Sounds/Beep.mp3", ofType: nil)
-        //self.run(playSound)
+        for touch in touches
+        {
+            let pos = touch.location(in: self)
+            
+            let nodeArr = nodes(at: pos)
+            
+            for node in nodeArr
+            {
+                
+                if node is Pill
+                {
+                    let pillNode = node as! Pill
+
+                    pillNode.position = pos
+                }
+                
+            }
+            
+        }
+        
+    }
+    
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?)
+    {
+        
+        print(Float.random(in: 1...1000))
+        
+        for touch in touches
+        {
+            let pos = touch.location(in: self)
+            
+            let nodeArr = nodes(at: pos)
+            
+            for node in nodeArr
+            {
+                
+                if node is Pill
+                {
+                    let pillNode = node as! Pill
+
+                    pillNode.position = pos
+                }
+                
+            }
+            
+        }
         
     }
     
@@ -211,6 +277,7 @@ class GameScene: SKScene
                 // Virus
                 if node is Virus
                 {
+                    mAudioSystem.PlaySound(name: "pop1")
                     let currentVirus = node as! Virus
                     currentVirus.DecreaseHealth(by: 1)
 
@@ -303,7 +370,7 @@ class GameScene: SKScene
         {
             if abs(accelerometer.acceleration.z) > mAccelerationThreshold
             {
-                print("Shake \(Float.random(in: 1.0...100.0))")
+                //print("Shake \(Float.random(in: 1.0...100.0))")
                 // What should happen when the device is shaken?
                 // Push viruses to edge of the screen
             }
@@ -471,11 +538,20 @@ class GameScene: SKScene
                 
                 view?.Shake(horizontalShake: CGFloat.random(in: -50.0...50.0), verticalShake: CGFloat.random(in: -50.0...50.0))
                 addParticle(pos: bomb.position, particle: mExplosionParticles!)
+                mAudioSystem.PlaySound(name: "explode")
                 
                 bomb.mIsAlive = false
                 mActiveBombs.remove(bomb)
                 mInactiveBombs.insert(bomb)
             }
+        }
+        
+        // Update pill
+        mPillObject.Update()
+        if CGVector.Dist(mPillObject.position, mCore.position) < 50.0
+        {
+            mCore.mHealth += mPillObject.mHealingAmount
+            mPillObject.mIsAlive = false
         }
         
         // Random spawning of viruses
@@ -506,6 +582,14 @@ class GameScene: SKScene
         if mActiveBombs.count <= 0
         {
             SpawnBomb(at: pos, speed: 50.0, explosionRange: 200.0, explosionDamage: 5)
+        }
+        
+        pos = CGPoint(x: CGFloat(Float.random(in: 1.0...Float(mScreenWidth))), y: CGFloat(Float.random(in: 1.0...Float(mScreenHeight))))
+        
+        // Spawn Pill
+        if mPillObject.IsDead()
+        {
+            SpawnPill(position: pos)
         }
         
         // Update core health label
@@ -680,6 +764,17 @@ class GameScene: SKScene
             addChild(newBomb)
         }
         
+    }
+    
+    
+    func SpawnPill(position p: CGPoint)
+    {
+        if mPillObject.IsDead()
+        {
+            mPillObject.position = p
+            mPillObject.mIsAlive = true
+            mPillObject.isHidden = false
+        }
     }
     
     

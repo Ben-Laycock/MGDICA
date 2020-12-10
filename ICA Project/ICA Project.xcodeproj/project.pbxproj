@@ -13,6 +13,7 @@
 		B52E032D2580387400ECD9DC /* AudioSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B52E032C2580387400ECD9DC /* AudioSystem.swift */; };
 		B52F48A125757F2A00B043DF /* Virus.swift in Sources */ = {isa = PBXBuildFile; fileRef = B52F48A025757F2A00B043DF /* Virus.swift */; };
 		B5372104257C3740003FD35A /* RedVirus.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5372103257C3740003FD35A /* RedVirus.swift */; };
+		B58D672D2582D4DB008B068F /* Pill.swift in Sources */ = {isa = PBXBuildFile; fileRef = B58D672C2582D4DB008B068F /* Pill.swift */; };
 		B5A4FDEB25779FFA00B89EBC /* CGVectorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5A4FDEA25779FFA00B89EBC /* CGVectorExtensions.swift */; };
 		B5A4FDED2577A02300B89EBC /* CGSizeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5A4FDEC2577A02300B89EBC /* CGSizeExtensions.swift */; };
 		B5A4FDEF2577A06900B89EBC /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5A4FDEE2577A06900B89EBC /* Helpers.swift */; };
@@ -62,6 +63,7 @@
 		B52E032C2580387400ECD9DC /* AudioSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioSystem.swift; sourceTree = "<group>"; };
 		B52F48A025757F2A00B043DF /* Virus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Virus.swift; sourceTree = "<group>"; };
 		B5372103257C3740003FD35A /* RedVirus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedVirus.swift; sourceTree = "<group>"; };
+		B58D672C2582D4DB008B068F /* Pill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pill.swift; sourceTree = "<group>"; };
 		B5A4FDEA25779FFA00B89EBC /* CGVectorExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGVectorExtensions.swift; sourceTree = "<group>"; };
 		B5A4FDEC2577A02300B89EBC /* CGSizeExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGSizeExtensions.swift; sourceTree = "<group>"; };
 		B5A4FDEE2577A06900B89EBC /* Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
@@ -163,6 +165,7 @@
 				B52E032C2580387400ECD9DC /* AudioSystem.swift */,
 				B5372103257C3740003FD35A /* RedVirus.swift */,
 				B5DEA9CF2577F5B4001533CA /* Bomb.swift */,
+				B58D672C2582D4DB008B068F /* Pill.swift */,
 				B5DEA9D52578293E001533CA /* Core.swift */,
 				B5A4FDEA25779FFA00B89EBC /* CGVectorExtensions.swift */,
 				B5DEA9D3257819AA001533CA /* CGPointExtensions.swift */,
@@ -345,6 +348,7 @@
 				B52F48A125757F2A00B043DF /* Virus.swift in Sources */,
 				B5DEA9D4257819AA001533CA /* CGPointExtensions.swift in Sources */,
 				B5DEA9D62578293E001533CA /* Core.swift in Sources */,
+				B58D672D2582D4DB008B068F /* Pill.swift in Sources */,
 				DBF79F192554450B00199755 /* GameScene.swift in Sources */,
 				B5A4FDEF2577A06900B89EBC /* Helpers.swift in Sources */,
 				DBF79F1B2554450B00199755 /* GameViewController.swift in Sources */,
