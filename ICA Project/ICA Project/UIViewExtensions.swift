@@ -10,6 +10,7 @@ import SpriteKit
 
 extension UIView
 {
+    // Function used to shake the view (Screen Shake)
     func Shake(horizontalShake x: CGFloat, verticalShake y: CGFloat)
     {
         self.transform = CGAffineTransform(translationX: x, y: y)

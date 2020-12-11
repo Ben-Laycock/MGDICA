@@ -33,9 +33,13 @@ class GameOverScene: SKScene
     // Highest saved score
     var mSavedHighScore = 0
     
+    // New high score?
+    var mNewHighScore : Bool = false
+    
     let savedData = UserDefaults.standard
     
     var mHasCompleteSetup = false
+    
     
     override func didMove(to view: SKView)
     {
@@ -46,12 +50,22 @@ class GameOverScene: SKScene
         {
             mSavedHighScore = mScoreFromLastGame
             savedData.set(mScoreFromLastGame, forKey: "HighScore")
+            mNewHighScore = true
         }
         
-        if mHasCompleteSetup
+        mScoreLabel.text = "Score: \(mScoreFromLastGame)"
+        
+        if mNewHighScore
         {
-           return
+            mHighScoreLabel.text = "NEW High Score: \(mSavedHighScore)"
         }
+        else
+        {
+            mHighScoreLabel.text = "High Score: \(mSavedHighScore)"
+        }
+        
+        // Dont run code past this point if setup has previously been completed
+        if mHasCompleteSetup { return }
         
         // Game over label
         mGameOverTitleLabel.position = CGPoint(x: mScreenWidth / 3 * 2, y: mScreenHeight / 4 * 3)
@@ -61,13 +75,11 @@ class GameOverScene: SKScene
         
         // Score label
         mScoreLabel.position = CGPoint(x: mScreenWidth / 3 * 2, y: mScreenHeight / 4)
-        mScoreLabel.text = "Score: \(mScoreFromLastGame)"
         mScoreLabel.fontSize = 48
         addChild(mScoreLabel)
         
         // High Score label
         mHighScoreLabel.position = CGPoint(x: mScreenWidth / 3 * 2, y: mScreenHeight / 4 * 2)
-        mHighScoreLabel.text = "High Score: \(mSavedHighScore)"
         mHighScoreLabel.fontSize = 48
         addChild(mHighScoreLabel)
         
@@ -87,20 +99,18 @@ class GameOverScene: SKScene
         
     }
     
+    
     func loadGameScene()
     {
-        if !mGameScene.ResetScene()
-        {
-            return
-        }
+        if !mGameScene.ResetScene() { return }
+        
         view?.presentScene(mGameScene, transition: .reveal(with: SKTransitionDirection.down, duration: 1.0))
-        //view?.presentScene(mGameScene)
     }
+    
     
     func loadMainMenuScene()
     {
         view?.presentScene(mMainMenuScene, transition: .reveal(with: SKTransitionDirection.right, duration: 1.0))
-        //view?.presentScene(mMainMenuScene)
     }
     
     
@@ -108,6 +118,7 @@ class GameOverScene: SKScene
     {
         
     }
+    
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?)
     {
@@ -133,6 +144,7 @@ class GameOverScene: SKScene
         
     }
     
+    
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?)
     {
         
@@ -141,9 +153,6 @@ class GameOverScene: SKScene
     
     override func update(_ currentTime: TimeInterval)
     {
-        
-        // Code called each frame before rendering
-        mScoreLabel.text = "Score: \(mScoreFromLastGame)"
         
     }
     

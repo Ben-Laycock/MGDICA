@@ -33,19 +33,6 @@ class Core : SKSpriteNode
     }
     
     
-    func Update()
-    {
-        if IsDead()
-        {
-            
-            return
-        }
-        
-        // What should be done if alive?
-        
-    }
-    
-    
     // Decreases health by given amount
     func DecreaseHealth(by amount: Int)
     {

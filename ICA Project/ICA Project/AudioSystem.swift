@@ -12,14 +12,27 @@ import AVFoundation
 class AudioSystem
 {
     
+    // Sound pools
     var mPooledPopSounds = Array<AVAudioPlayer>()
     var mPooledExplodeSounds = Array<AVAudioPlayer>()
     
+    // Saved Data
+    var mSaveData = UserDefaults.standard
+    
+    // Audio enabled
+    var mAudioEnabled : Bool = true
+    
+    
     func Setup()
     {
+        // Get saved value for AudioEnabled
+        UpdateSettings()
+        
+        // Get sounds from resources
         let pop1Sound = Bundle.main.path(forResource: "Sounds/pop1", ofType: "mp3")
         let explodeSound = Bundle.main.path(forResource: "Sounds/pop2", ofType: "mp3")
         
+        // Create audio objects for sounds pools
         for _ in 1...10
         {
             // Pop1 Sounds
@@ -46,8 +59,18 @@ class AudioSystem
         }
     }
     
+    
+    func UpdateSettings()
+    {
+        // Get saved value for AudioEnabled
+        mAudioEnabled = mSaveData.bool(forKey: "AudioEnabled")
+    }
+    
+    
     func PlaySound(name soundName: String)
     {
+        if !mAudioEnabled { return }
+        
         switch soundName
         {
         case "pop1":
@@ -59,6 +82,7 @@ class AudioSystem
         }
         
     }
+    
     
     func GetNextPopSound() -> (AVAudioPlayer)
     {
@@ -85,6 +109,7 @@ class AudioSystem
         
         return mPooledPopSounds[0]
     }
+    
     
     func GetNextExplodeSound() -> (AVAudioPlayer)
     {

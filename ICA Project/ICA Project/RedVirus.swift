@@ -36,12 +36,8 @@ class RedVirus : SKSpriteNode
     
     func Update()
     {
-        if IsDead()
-        {
-            self.position = CGPoint(x: -1000.0, y: -1000.0)
-            return
-        }
-        
+        if IsDead() || !IsActive() { return }
+
         // What should be done if alive?
         MoveToTarget(at: mTarget, precision: 100.0)
     }
@@ -95,8 +91,6 @@ class RedVirus : SKSpriteNode
         {
             self.physicsBody?.velocity = (self.physicsBody?.velocity.Norm())! * mMaxSpeed
         }
-        
-        //self.physicsBody?.velocity = finalVector
     }
     
 }

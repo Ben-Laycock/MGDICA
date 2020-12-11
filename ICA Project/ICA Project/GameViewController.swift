@@ -17,6 +17,7 @@ class GameViewController: UIViewController
     var mGameScene : GameScene!
     var mMainMenuScene : MainMenuScene!
     
+    
     override func viewDidLoad()
     {
         
@@ -80,6 +81,7 @@ class GameViewController: UIViewController
         return true
     }
 
+    
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask
     {
         

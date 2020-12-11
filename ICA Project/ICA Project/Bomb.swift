@@ -24,6 +24,7 @@ class Bomb : SKSpriteNode
     var mIsAlive = false
     var mMovementDirection = CGVector.zero
     
+    
     init(texture: SKTexture!, color: UIColor, size: CGSize, movementSpeed : Float, explosionRange: Float, explosionDamage: Int)
     {
         
@@ -45,16 +46,12 @@ class Bomb : SKSpriteNode
     func Update()
     {
         
-        if mIsAlive
-        {
-            MoveBomb()
-        }
-        else
-        {
-            self.position = CGPoint(x: -1000.0, y: -1000.0)
-        }
+        if !mIsAlive || !IsActive() { return }
+        
+        MoveBomb()
         
     }
+    
     
     func MoveBomb()
     {
@@ -63,6 +60,7 @@ class Bomb : SKSpriteNode
         
         LockToScreen()
     }
+    
     
     func LockToScreen()
     {

@@ -74,34 +74,15 @@ class GameScene: SKScene
     
     // Device Motion
     let mMotionManager = CMMotionManager()
-    // Accelerometer
-    var mAccelerationThreshold = 2.0
-    // Gyroscope variables
+
+    // Accelerometer variables
     var mAccelerometerVector = CGVector.zero
     
     // Particles
     let mExplosionParticles = SKEmitterNode(fileNamed: "Explosion.sks")
     let mVirusDeathParticles = SKEmitterNode(fileNamed: "VirusDestruction.sks")
     let mRedVirusDeathParticles = SKEmitterNode(fileNamed: "RedVirusDestruction.sks")
-    
-    // Audio
-    /*
-    var mAudioPlayer1 = AVAudioPlayer()
-    let beepSound = SKAction.playSoundFileNamed("Sounds/Beep.mp3", waitForCompletion: true)
-    
-    //let sound = Bundle.main.path(forResource: "Sounds/Beep.mp3", ofType: nil)
-    //self.run(playSound)
 
-    let sound = Bundle.main.path(forResource: "Sounds/Beep.mp3", ofType: nil)
-    do
-    {
-        mAudioPlayer1 = try AVAudioPlayer(contentsOf: URL(fileURLWithPath: sound!))
-    } catch
-    {
-        print(error)
-    }
-    */
-    
     // Gestures
     var mSwipeRightGR : UISwipeGestureRecognizer!
     var mSwipeLeftGR : UISwipeGestureRecognizer!
@@ -110,15 +91,12 @@ class GameScene: SKScene
     // Audio System
     var mAudioSystem : AudioSystem!
     
-    var mHasCompleteSetup = false
+    var mHasCompleteSetup : Bool = false
     
     override func didMove(to view: SKView)
     {
         
-        if mHasCompleteSetup
-        {
-           return
-        }
+        if mHasCompleteSetup { return }
         
         mSwipeRightGR = UISwipeGestureRecognizer(target: self, action: #selector(manageSwipe))
         mSwipeRightGR.direction = .right
@@ -184,14 +162,17 @@ class GameScene: SKScene
     
     @objc func manageSwipe(gesture: UISwipeGestureRecognizer)
     {
-        // Check if the swipe started from a red virus
+        // Get the start location of the swipe
         var location = gesture.location(in: self.view)
         location = CGPoint(x: location.x, y: mScreenHeight-location.y)
         
+        // Check if the use swiped a red virus
         for redVirus in mActiveRedViruses
         {
             if CGVector.Dist(redVirus.position, location) < mSwipePointAccuracy
             {
+                // Manage the direction of the swipe
+                // Apply force to the swiped red virus
                 redVirus.physicsBody?.velocity = CGVector.zero
                 if gesture.direction == .right
                 {
@@ -209,24 +190,27 @@ class GameScene: SKScene
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?)
     {
         
+        // Check every touch
         for touch in touches
         {
+            // Get the position of the current touch
             let pos = touch.location(in: self)
             
+            // Find all nodes at the position of the current touch
             let nodeArr = nodes(at: pos)
             
+            // Loop through all nodes
             for node in nodeArr
             {
-                
+                // If the node is the Pill object
+                // set its position to the touch position
                 if node is Pill
                 {
                     let pillNode = node as! Pill
 
                     pillNode.position = pos
                 }
-                
             }
-            
         }
         
     }
@@ -234,26 +218,29 @@ class GameScene: SKScene
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?)
     {
         
-        print(Float.random(in: 1...1000))
+        super.touchesMoved(touches, with: event)
         
+        // Check every touch
         for touch in touches
         {
+            // Get the position of the current touch
             let pos = touch.location(in: self)
             
+            // Find all nodes at the position of the current touch
             let nodeArr = nodes(at: pos)
             
+            // Loop through all the nodes
             for node in nodeArr
             {
-                
+                // If the node is a pill
+                // set it to the current touch position
                 if node is Pill
                 {
                     let pillNode = node as! Pill
 
                     pillNode.position = pos
                 }
-                
             }
-            
         }
         
     }
@@ -263,6 +250,7 @@ class GameScene: SKScene
         
         super.touchesEnded(touches, with: event)
         
+        // Check all touches
         for touch in touches
         {
             let pos = touch.location(in: self) // Position of the touch
@@ -288,6 +276,7 @@ class GameScene: SKScene
                         mScore += 1;
                         mActiveViruses.remove(currentVirus)
                         mInactiveViruses.insert(currentVirus)
+                        currentVirus.SetActive(false)
                     }
                 }
                 
@@ -342,21 +331,26 @@ class GameScene: SKScene
     func addParticle(pos p: CGPoint, particle pS: SKEmitterNode)
     {
         
+        // Copy passed particle system
         let particleToAdd = pS.copy() as! SKEmitterNode
         
+        // Set particle system position
+        // Stop user interaction with the new particle system
         particleToAdd.position = p
         particleToAdd.isUserInteractionEnabled = false
         
-        let addParticle = SKAction.run({self.addChild(particleToAdd)})
-
+        // Get the particle system duration
         let particleDuration = particleToAdd.particleLifetime
+        
+        // Setup all actions for the particle sequence
+        let addAction = SKAction.run({self.addChild(particleToAdd)})
+        let waitAction = SKAction.wait(forDuration: TimeInterval(particleDuration))
+        let removeAction = SKAction.run({particleToAdd.removeFromParent()})
+        
+        // Create the sequence of actions
+        let sequence = SKAction.sequence([addAction, waitAction, removeAction])
 
-        let wait = SKAction.wait(forDuration: TimeInterval(particleDuration))
-
-        let removeParticle = SKAction.run({particleToAdd.removeFromParent()})
-
-        let sequence = SKAction.sequence([addParticle, wait, removeParticle])
-
+        // Run the sequence
         self.run(sequence)
         
     }
@@ -368,16 +362,8 @@ class GameScene: SKScene
         // Accelerometer
         if let accelerometer = mMotionManager.accelerometerData
         {
-            if abs(accelerometer.acceleration.z) > mAccelerationThreshold
-            {
-                //print("Shake \(Float.random(in: 1.0...100.0))")
-                // What should happen when the device is shaken?
-                // Push viruses to edge of the screen
-            }
-            
-            let newAccelerometerVector = CGVector(dx: -accelerometer.acceleration.y, dy: accelerometer.acceleration.x)
-            
-            mAccelerometerVector = newAccelerometerVector.Norm()
+            // Update the accelerometer vector
+            mAccelerometerVector = CGVector(dx: -accelerometer.acceleration.y, dy: accelerometer.acceleration.x).Norm()
         }
         
         
@@ -392,16 +378,12 @@ class GameScene: SKScene
 
     
         // Update viruses
-        for virus in mInactiveViruses
-        {
-            virus.Update()
-        }
-        
         for virus in mActiveViruses
         {
             // Update the virus
             virus.Update()
-
+            
+            // Check if virus is within range of the core
             if CGVector.Dist(virus.position, mCore.position) < (mCore.size.width/2 + virus.size.width/2 + 10)
             {
                 mCore.mHealth -= virus.mDamage
@@ -410,11 +392,13 @@ class GameScene: SKScene
                 mInactiveViruses.insert(virus)
             }
             
+            // Manage dead viruses
             if virus.IsDead()
             {
                 addParticle(pos: virus.position, particle: mVirusDeathParticles!)
                 mActiveViruses.remove(virus)
                 mInactiveViruses.insert(virus)
+                virus.SetActive(false)
             }
             
             // Animate Virus
@@ -426,15 +410,11 @@ class GameScene: SKScene
         }
         
         // Update Red Viruses
-        for redVirus in mInactiveRedViruses
-        {
-            redVirus.Update()
-        }
-        
         for redVirus in mActiveRedViruses
         {
             redVirus.Update()
             
+            // Check if red virus is within range of the core
             if CGVector.Dist(redVirus.position, mCore.position) < (mCore.size.width/2 + redVirus.size.width/2 + 10)
             {
                 mCore.mHealth -= redVirus.mDamage
@@ -443,11 +423,13 @@ class GameScene: SKScene
                 mInactiveRedViruses.insert(redVirus)
             }
             
+            // Manage dead red viruses
             if redVirus.IsDead()
             {
                 addParticle(pos: redVirus.position, particle: mRedVirusDeathParticles!)
                 mActiveRedViruses.remove(redVirus)
                 mInactiveRedViruses.insert(redVirus)
+                redVirus.SetActive(false)
             }
             
             // Animate Red Virus
@@ -458,22 +440,17 @@ class GameScene: SKScene
             redVirus.run(resizeVirus)
         }
         
-        // Bombs
-        for bomb in mInactiveBombs
-        {
-            bomb.mMovementDirection = mAccelerometerVector
-            bomb.mIsAlive = false // Inactive bombs shouldn't be alive
-            bomb.Update()
-        }
-        
+        // Update Bombs
         for bomb in mActiveBombs
         {
             // Manage current active bombs
             bomb.mMovementDirection = mAccelerometerVector
             bomb.Update()
             
+            // Variable used to check if a bomb has hit another object
             var hasCollided = false
             
+            // Check if current bomb has hit a virus
             for virus in mActiveViruses
             {
                 let dirToVirus = virus.position.ToVector() - bomb.position.ToVector()
@@ -485,6 +462,7 @@ class GameScene: SKScene
                 }
             }
             
+            // Check if current bomb has hit a red virus
             for redVirus in mActiveRedViruses
             {
                 let dirToVirus = redVirus.position.ToVector() - bomb.position.ToVector()
@@ -496,62 +474,82 @@ class GameScene: SKScene
                 }
             }
             
+            // What should happen if the current bomb has hit something?
             if hasCollided
             {
+                // Loop through all viruses
                 for virus in mActiveViruses
                 {
+                    // Get the direction and the distance to the current virus from the bomb
                     let dirToVirus = virus.position.ToVector() - bomb.position.ToVector()
                     let distToVirus = dirToVirus.Mag()
                     
+                    // Check if the virus is within explosion range
                     if distToVirus <= CGFloat(bomb.mExplosionRadius)
                     {
+                        // Damage the virus
                         virus.DecreaseHealth(by: bomb.mExplosionDamage)
                         
+                        // Manage dead virus
                         if virus.IsDead()
                         {
                             addParticle(pos: virus.position, particle: mVirusDeathParticles!)
                             mScore += 1;
                             mActiveViruses.remove(virus)
                             mInactiveViruses.insert(virus)
+                            virus.SetActive(false)
                         }
                     }
                 }
                 
+                // Loop through all red viruses
                 for redVirus in mActiveRedViruses
                 {
+                    // Get the direction and the distance to the current red virus from the bomb
                     let dirToVirus = redVirus.position.ToVector() - bomb.position.ToVector()
                     let distToVirus = dirToVirus.Mag()
                     
+                    // Check if the red virus is within explosion range
                     if distToVirus <= CGFloat(bomb.mExplosionRadius)
                     {
+                        // Damange the red virus
                         redVirus.DecreaseHealth(by: bomb.mExplosionDamage)
                         
+                        // Manage dead red virus
                         if redVirus.IsDead()
                         {
                             addParticle(pos: redVirus.position, particle: mRedVirusDeathParticles!)
                             mScore += 1;
                             mActiveRedViruses.remove(redVirus)
                             mInactiveRedViruses.insert(redVirus)
+                            redVirus.SetActive(false)
                         }
                     }
                 }
                 
+                // Shake the screen
                 view?.Shake(horizontalShake: CGFloat.random(in: -50.0...50.0), verticalShake: CGFloat.random(in: -50.0...50.0))
+                // Play explosion particle
                 addParticle(pos: bomb.position, particle: mExplosionParticles!)
+                // Play explosion sound
                 mAudioSystem.PlaySound(name: "explode")
                 
+                // Manage dead bomb
                 bomb.mIsAlive = false
                 mActiveBombs.remove(bomb)
                 mInactiveBombs.insert(bomb)
+                bomb.SetActive(false)
             }
         }
         
-        // Update pill
-        mPillObject.Update()
+        // Check if pill is within range of the core
         if CGVector.Dist(mPillObject.position, mCore.position) < 50.0
         {
+            // Heal the core
             mCore.mHealth += mPillObject.mHealingAmount
+            // Deactivate pill
             mPillObject.mIsAlive = false
+            mPillObject.SetActive(false)
         }
         
         // Random spawning of viruses
@@ -612,17 +610,23 @@ class GameScene: SKScene
     
     func SpawnVirus(at p: CGPoint, health h: Int, speed s: Float, currentTime t: Double)
     {
-        
+        // Check if there is a virus avaliable to spawn
         if mInactiveViruses.isEmpty
         {
             return
         }
         
+        // Get first virus from the inactive viruses
+        // and add it to the active viruses
         let inactiveVirus = mInactiveViruses.popFirst()
         mActiveViruses.insert(inactiveVirus!)
         
+        // Set the virus position
+        // Run the virus setup
+        // Activate the virus
         inactiveVirus?.position = p
         inactiveVirus?.Setup(health: h, speed: s, timeSpawned: t, damage: 1)
+        inactiveVirus?.SetActive(true)
         
     }
     
@@ -643,6 +647,7 @@ class GameScene: SKScene
             newVirus.physicsBody?.collisionBitMask = 0x0
 
             newVirus.SetTarget(target: mCore.position)
+            newVirus.SetActive(false)
             
             addChild(newVirus)
         }
@@ -664,17 +669,23 @@ class GameScene: SKScene
     
     func SpawnRedVirus(at p: CGPoint, health h: Int, speed s: Float, currentTime t: Double)
     {
-        
+        // Check if there is a red virus to spawn
         if mInactiveRedViruses.isEmpty
         {
             return
         }
         
+        // Get the first inactive red virus
+        // and add it to the active red viruses
         let inactiveRedVirus = mInactiveRedViruses.popFirst()
         mActiveRedViruses.insert(inactiveRedVirus!)
         
+        // Set the red virus position
+        // Run red virus setup
+        // Activate the red virus
         inactiveRedVirus?.position = p
         inactiveRedVirus?.Setup(health: h, speed: s, timeSpawned: t, damage: 1)
+        inactiveRedVirus?.SetActive(true)
         
     }
     
@@ -695,6 +706,7 @@ class GameScene: SKScene
             newRedVirus.physicsBody?.collisionBitMask = 0x0
 
             newRedVirus.SetTarget(target: mCore.position)
+            newRedVirus.SetActive(false)
             
             addChild(newRedVirus)
         }
@@ -720,24 +732,30 @@ class GameScene: SKScene
                    explosionRange eRange: Float,
                    explosionDamage eDamage: Int)
     {
-        
+        // Check if there is a bomb to spawn
         if mInactiveBombs.isEmpty
         {
             return
         }
         
+        // Get the first inactive bomb
+        // and add it to the active bombs
         let inactiveBomb = mInactiveBombs.popFirst()
         mActiveBombs.insert(inactiveBomb!)
         
+        // Set the bombs position
         inactiveBomb?.position = p
         inactiveBomb?.mMovementDirection = CGVector.zero
         inactiveBomb?.mMovementSpeed = s
         inactiveBomb?.mExplosionRadius = eRange
         inactiveBomb?.mExplosionDamage = eDamage
         
+        // Reset the bombs velocity
         inactiveBomb?.physicsBody?.velocity = CGVector.zero
         
+        // Activate the bomb
         inactiveBomb?.mIsAlive = true
+        inactiveBomb?.SetActive(true)
         
     }
     
@@ -760,6 +778,7 @@ class GameScene: SKScene
             newBomb.mScreenWidth = mScreenWidth
             newBomb.mScreenHeight = mScreenHeight
             newBomb.mIsAlive = false
+            newBomb.SetActive(false)
             
             addChild(newBomb)
         }
@@ -773,7 +792,7 @@ class GameScene: SKScene
         {
             mPillObject.position = p
             mPillObject.mIsAlive = true
-            mPillObject.isHidden = false
+            mPillObject.SetActive(true)
         }
     }
     
@@ -795,7 +814,14 @@ class GameScene: SKScene
         {
             mActiveViruses.remove(virus)
             mInactiveViruses.insert(virus)
-            virus.Update()
+            virus.SetActive(false)
+        }
+        
+        for redVirus in mActiveRedViruses
+        {
+            mActiveRedViruses.remove(redVirus)
+            mInactiveRedViruses.insert(redVirus)
+            redVirus.SetActive(false)
         }
         
         // Bombs
@@ -804,11 +830,14 @@ class GameScene: SKScene
             bomb.mIsAlive = false
             mActiveBombs.remove(bomb)
             mInactiveBombs.insert(bomb)
-            bomb.Update()
+            bomb.SetActive(false)
         }
         
+        // Pill
+        if nil != mPillObject { mPillObject.SetActive(false) }
+        
         // Core
-        mCore.mHealth = mCoreStartingHealth
+        if nil != mCore { mCore.mHealth = mCoreStartingHealth }
         
         // Score
         mScore = 0
@@ -816,6 +845,9 @@ class GameScene: SKScene
         
         // Game Settings
         mCurrentWave = 1
+        
+        // Update audio system
+        if nil != mAudioSystem { mAudioSystem.UpdateSettings() }
         
         return true
         

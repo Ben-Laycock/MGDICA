@@ -23,10 +23,20 @@ class MainMenuScene: SKScene
     
     // Main Menu
     let mPlayButton = SKSpriteNode(imageNamed: "PlayButton")
+    let mOptionsButton = SKSpriteNode(imageNamed: "InfoButton")
     let mInfoButton = SKSpriteNode(imageNamed: "InfoButton")
     
+    
+    // Options Menu
+    let mOptionsBackButton = SKSpriteNode(imageNamed: "CancelButton")
+    let mAudioOptionLabel = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
+    let mDisableAudioButton = SKSpriteNode(imageNamed: "CheckboxSelected")
+    let mEnableAudioButton = SKSpriteNode(imageNamed: "Checkbox")
+    var mAudioEnabled : Bool = true
+    
+    
     // Info Menu
-    let mBackButton = SKSpriteNode(imageNamed: "CancelButton")
+    let mInfoBackButton = SKSpriteNode(imageNamed: "CancelButton")
     let mVirusImage = SKSpriteNode(imageNamed: "Virus")
     let mRedVirusImage = SKSpriteNode(imageNamed: "RedVirus")
     let mBombImage = SKSpriteNode(imageNamed: "Mine")
@@ -39,41 +49,76 @@ class MainMenuScene: SKScene
     let mPillInfo = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
     let mCoreInfo = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
     
-    var mHasCompleteSetup = false
+    
+    var mSavedData = UserDefaults.standard
+    var mHasCompleteSetup : Bool = false
+    
     
     override func didMove(to view: SKView)
     {
         
-        if mHasCompleteSetup
-        {
-           return
-        }
+        mAudioEnabled = mSavedData.bool(forKey: "AudioEnabled")
         
-        // Main menu setup
+        if mHasCompleteSetup { return }
+        
+        // ===================  Main menu setup  ===================
         mMainMenuTitleLabel.position = CGPoint(x: mScreenWidth / 2, y: mScreenHeight / 2)
         mMainMenuTitleLabel.text = "Main Menu"
         mMainMenuTitleLabel.fontSize = 48
         addChild(mMainMenuTitleLabel)
         
+        // Play button
         mPlayButton.name = "PlayButton"
         mPlayButton.position = CGPoint(x: 10 + SKTexture(imageNamed: "PlayButton").size().width / 2,
                                        y: mScreenHeight / 6 * 4)
         mPlayButton.size = SKTexture(imageNamed: "PlayButton").size() * 0.3
         addChild(mPlayButton)
         
+        // Options button
+        mOptionsButton.name = "OptionsButton"
+        mOptionsButton.position = CGPoint(x: 10 + SKTexture(imageNamed: "PlayButton").size().width / 2,
+                                       y: mScreenHeight / 6 * 3)
+        mOptionsButton.size = SKTexture(imageNamed: "InfoButton").size() * 0.3
+        addChild(mOptionsButton)
+        
+        // Info button
         mInfoButton.name = "InfoButton"
         mInfoButton.position = CGPoint(x: 10 + SKTexture(imageNamed: "PlayButton").size().width / 2,
                                        y: mScreenHeight / 6 * 2)
         mInfoButton.size = SKTexture(imageNamed: "InfoButton").size() * 0.3
         addChild(mInfoButton)
-     
         
-        // Info menu setup
-        mBackButton.name = "BackButton"
-        mBackButton.position = CGPoint(x: 10 + SKTexture(imageNamed: "PlayButton").size().width / 2,
+        
+        // ===================  Options menu setup  ===================
+        mOptionsBackButton.name = "OptionsBackButton"
+        mOptionsBackButton.position = CGPoint(x: 10 + SKTexture(imageNamed: "PlayButton").size().width / 2,
                                        y: mScreenHeight / 6 * 5)
-        mBackButton.size = SKTexture(imageNamed: "CancelButton").size() * 0.3
-        addChild(mBackButton)
+        mOptionsBackButton.size = SKTexture(imageNamed: "CancelButton").size() * 0.3
+        addChild(mOptionsBackButton)
+        
+        mAudioOptionLabel.position = CGPoint(x: mScreenWidth / 3, y: mScreenHeight / 2)
+        mAudioOptionLabel.verticalAlignmentMode = .center
+        mAudioOptionLabel.text = "Audio"
+        mAudioOptionLabel.fontSize = 36
+        addChild(mAudioOptionLabel)
+        
+        mDisableAudioButton.name = "DisableAudio"
+        mDisableAudioButton.size = SKTexture(imageNamed: "CheckboxSelected").size() * 0.15
+        mDisableAudioButton.position = CGPoint(x: mScreenWidth / 3 + mAudioOptionLabel.frame.width/2 + mDisableAudioButton.size.width/2 + 20, y: mScreenHeight / 2)
+        addChild(mDisableAudioButton)
+        
+        mEnableAudioButton.name = "EnableAudio"
+        mEnableAudioButton.size = SKTexture(imageNamed: "Checkbox").size() * 0.15
+        mEnableAudioButton.position = CGPoint(x: mScreenWidth / 3 + mAudioOptionLabel.frame.width/2 + mEnableAudioButton.size.width/2 + 20, y: mScreenHeight / 2)
+        addChild(mEnableAudioButton)
+        
+        
+        // ===================  Info menu setup  ===================
+        mInfoBackButton.name = "InfoBackButton"
+        mInfoBackButton.position = CGPoint(x: 10 + SKTexture(imageNamed: "PlayButton").size().width / 2,
+                                       y: mScreenHeight / 6 * 5)
+        mInfoBackButton.size = SKTexture(imageNamed: "CancelButton").size() * 0.3
+        addChild(mInfoBackButton)
         
         // Virus
         mVirusImage.name = "VirusImage"
@@ -141,16 +186,19 @@ class MainMenuScene: SKScene
         addChild(mCoreInfo)
         
         // Disable info menu
-        ToggleInfoMenu()
+        ToggleOptionsMenu(on: false)
+        ToggleInfoMenu(on: false)
         
         mHasCompleteSetup = true
         
     }
     
+    
     func loadScene()
     {
+        if !mGameScene.ResetScene() { return }
+        
         view?.presentScene(mGameScene, transition: .reveal(with: SKTransitionDirection.left, duration: 1.0))
-        //view?.presentScene(mGameScene)
     }
     
     
@@ -158,6 +206,7 @@ class MainMenuScene: SKScene
     {
         
     }
+    
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?)
     {
@@ -176,18 +225,53 @@ class MainMenuScene: SKScene
             
             if node.name == "InfoButton"
             {
-                ToggleMainMenu()
-                ToggleInfoMenu()
+                ToggleMainMenu(on: false)
+                ToggleOptionsMenu(on: false)
+                ToggleInfoMenu(on: true)
             }
             
-            if node.name == "BackButton"
+            if node.name == "OptionsButton"
             {
-                ToggleInfoMenu()
-                ToggleMainMenu()
+                ToggleMainMenu(on: false)
+                ToggleInfoMenu(on: false)
+                ToggleOptionsMenu(on: true)
+            }
+            
+            if node.name == "InfoBackButton"
+            {
+                ToggleInfoMenu(on: false)
+                ToggleOptionsMenu(on: false)
+                ToggleMainMenu(on: true)
+            }
+            
+            
+            // Options menu
+            if node.name == "OptionsBackButton"
+            {
+                ToggleInfoMenu(on: false)
+                ToggleOptionsMenu(on: false)
+                ToggleMainMenu(on: true)
+            }
+            
+            if node.name == "DisableAudio"
+            {
+                mAudioEnabled = false
+                mSavedData.set(mAudioEnabled, forKey: "AudioEnabled")
+                mDisableAudioButton.SetActive(false)
+                mEnableAudioButton.SetActive(true)
+            }
+            
+            if node.name == "EnableAudio"
+            {
+                mAudioEnabled = true
+                mSavedData.set(mAudioEnabled, forKey: "AudioEnabled")
+                mEnableAudioButton.SetActive(false)
+                mDisableAudioButton.SetActive(true)
             }
         }
         
     }
+    
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?)
     {
@@ -200,27 +284,56 @@ class MainMenuScene: SKScene
         
     }
     
-    func ToggleMainMenu()
+    
+    func ToggleMainMenu(on status: Bool)
     {
-        mMainMenuTitleLabel.isHidden = !mMainMenuTitleLabel.isHidden
-        mPlayButton.isHidden = !mPlayButton.isHidden
-        mInfoButton.isHidden = !mInfoButton.isHidden
+        mMainMenuTitleLabel.SetActive(status)
+        mPlayButton.SetActive(status)
+        mInfoButton.SetActive(status)
+        mOptionsButton.SetActive(status)
     }
     
-    func ToggleInfoMenu()
+    
+    func ToggleOptionsMenu(on status: Bool)
     {
-        mBackButton.isHidden = !mBackButton.isHidden
-        mVirusImage.isHidden = !mVirusImage.isHidden
-        mRedVirusImage.isHidden = !mRedVirusImage.isHidden
-        mBombImage.isHidden = !mBombImage.isHidden
-        mPillImage.isHidden = !mPillImage.isHidden
-        mCoreImage.isHidden = !mCoreImage.isHidden
+        mOptionsBackButton.SetActive(status)
+        mAudioOptionLabel.SetActive(status)
+
+        mDisableAudioButton.SetActive(status)
+        mEnableAudioButton.SetActive(status)
         
-        mVirusInfo.isHidden = !mVirusInfo.isHidden
-        mRedVirusInfo.isHidden = !mRedVirusInfo.isHidden
-        mBombInfo.isHidden = !mBombInfo.isHidden
-        mPillInfo.isHidden = !mPillInfo.isHidden
-        mCoreInfo.isHidden = !mCoreInfo.isHidden
+        // Options menu is being enabled
+        if true == status
+        {
+            // Audio is disabled
+            if false == mAudioEnabled
+            {
+                mDisableAudioButton.SetActive(false)
+                mEnableAudioButton.SetActive(true)
+            }
+            else
+            {
+                mEnableAudioButton.SetActive(false)
+                mDisableAudioButton.SetActive(true)
+            }
+        }
+    }
+    
+    
+    func ToggleInfoMenu(on status: Bool)
+    {
+        mInfoBackButton.SetActive(status)
+        mVirusImage.SetActive(status)
+        mRedVirusImage.SetActive(status)
+        mBombImage.SetActive(status)
+        mPillImage.SetActive(status)
+        mCoreImage.SetActive(status)
+        
+        mVirusInfo.SetActive(status)
+        mRedVirusInfo.SetActive(status)
+        mBombInfo.SetActive(status)
+        mPillInfo.SetActive(status)
+        mCoreInfo.SetActive(status)
     }
     
 }

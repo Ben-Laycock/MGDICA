@@ -34,11 +34,7 @@ class Virus : SKSpriteNode
     
     func Update()
     {
-        if IsDead()
-        {
-            self.position = CGPoint(x: -1000.0, y: -1000.0)
-            return
-        }
+        if IsDead() || !IsActive() { return }
         
         // What should be done if alive?
         MoveToTarget(at: mTarget, precision: 20.0)
