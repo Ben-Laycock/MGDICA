@@ -12,12 +12,5 @@ class Pill : SKSpriteNode
 {
     
     var mHealingAmount : Int = 5
-    var mIsAlive : Bool = false
- 
-    
-    func IsDead() -> (Bool)
-    {
-        return !mIsAlive
-    }
     
 }

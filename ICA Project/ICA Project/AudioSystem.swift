@@ -11,10 +11,10 @@ import AVFoundation
 
 class AudioSystem
 {
-    
-    // Sound pools
-    var mPooledPopSounds = Array<AVAudioPlayer>()
-    var mPooledExplodeSounds = Array<AVAudioPlayer>()
+
+    // Sounds
+    var pop1 : SKAction!
+    var explode : SKAction!
     
     // Saved Data
     var mSaveData = UserDefaults.standard
@@ -28,35 +28,9 @@ class AudioSystem
         // Get saved value for AudioEnabled
         UpdateSettings()
         
-        // Get sounds from resources
-        let pop1Sound = Bundle.main.path(forResource: "Sounds/pop1", ofType: "mp3")
-        let explodeSound = Bundle.main.path(forResource: "Sounds/pop2", ofType: "mp3")
-        
-        // Create audio objects for sounds pools
-        for _ in 1...10
-        {
-            // Pop1 Sounds
-            do
-            {
-                let audioObject = try AVAudioPlayer(contentsOf: URL(fileURLWithPath: pop1Sound!))
-                mPooledPopSounds.append(audioObject)
-            }
-            catch
-            {
-                print(error)
-            }
-            
-            // Explode Sounds
-            do
-            {
-                let audioObject = try AVAudioPlayer(contentsOf: URL(fileURLWithPath: explodeSound!))
-                mPooledPopSounds.append(audioObject)
-            }
-            catch
-            {
-                print(error)
-            }
-        }
+        // Sounds
+        pop1 = SKAction.playSoundFileNamed("Sounds/pop1.mp3", waitForCompletion: true)
+        explode = SKAction.playSoundFileNamed("Sounds/pop3.mp3", waitForCompletion: true)
     }
     
     
@@ -67,73 +41,20 @@ class AudioSystem
     }
     
     
-    func PlaySound(name soundName: String)
+    func PlaySound(name soundName: String, from scene: SKScene)
     {
         if !mAudioEnabled { return }
         
         switch soundName
         {
         case "pop1":
-            GetNextPopSound().play()
+            scene.run(pop1)
         case "explode":
-            GetNextExplodeSound().play()
+            scene.run(explode)
         default:
             print("No sound was specified!")
         }
         
-    }
-    
-    
-    func GetNextPopSound() -> (AVAudioPlayer)
-    {
-        
-        // Look for an inactive audio object
-        for aPlayer in mPooledPopSounds
-        {
-            if !aPlayer.isPlaying
-            {
-                return aPlayer
-            }
-        }
-        
-        // No inactive audio objects were found, create a new one
-        let popSound = Bundle.main.path(forResource: "Sounds/pop1", ofType: "mp3")
-        do {
-            let newAudioPlayer = try AVAudioPlayer(contentsOf: URL(fileURLWithPath: popSound!))
-            mPooledPopSounds.append(newAudioPlayer)
-
-            return newAudioPlayer
-        } catch {
-            print(error)
-        }
-        
-        return mPooledPopSounds[0]
-    }
-    
-    
-    func GetNextExplodeSound() -> (AVAudioPlayer)
-    {
-        // Look for an inactive audio object
-        for aPlayer in mPooledExplodeSounds
-        {
-            if !aPlayer.isPlaying
-            {
-                return aPlayer
-            }
-        }
-        
-        // No inactive audio objects were found, create a new one
-        let explodeSound = Bundle.main.path(forResource: "Sounds/pop2", ofType: "mp3")
-        do {
-            let newAudioPlayer = try AVAudioPlayer(contentsOf: URL(fileURLWithPath: explodeSound!))
-            mPooledExplodeSounds.append(newAudioPlayer)
-
-            return newAudioPlayer
-        } catch {
-            print(error)
-        }
-        
-        return mPooledExplodeSounds[0]
     }
     
 }

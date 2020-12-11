@@ -54,7 +54,9 @@ class GameScene: SKScene
     var mCore : Core!
     
     // Game Settings
-    var mCurrentWave = 1
+    var mCurrentWave : Int = 0
+    var mWaveBombLastAliveOn : Int = 0
+    var mGameOver : Bool = false
     
     // Score
     let mScoreLabel = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
@@ -93,8 +95,11 @@ class GameScene: SKScene
     
     var mHasCompleteSetup : Bool = false
     
+    
     override func didMove(to view: SKView)
     {
+        
+        mGameOver = false
         
         if mHasCompleteSetup { return }
         
@@ -130,6 +135,7 @@ class GameScene: SKScene
         mPillObject.physicsBody = SKPhysicsBody(circleOfRadius: mVirusTexture.size().width)
         mPillObject.physicsBody?.affectedByGravity = false
         mPillObject.physicsBody?.collisionBitMask = 0x0
+        mPillObject.SetActive(false)
         addChild(mPillObject)
         
         // Score label
@@ -250,6 +256,8 @@ class GameScene: SKScene
         
         super.touchesEnded(touches, with: event)
         
+        mCurrentWave = 20
+        
         // Check all touches
         for touch in touches
         {
@@ -261,11 +269,12 @@ class GameScene: SKScene
             // What happens per touched object type?
             for node in nodeArr
             {
-
                 // Virus
                 if node is Virus
                 {
-                    mAudioSystem.PlaySound(name: "pop1")
+                    //mAudioSystem.PlaySound(name: "pop1")
+                    mAudioSystem.PlaySound(name: "pop1", from: self)
+                    
                     let currentVirus = node as! Virus
                     currentVirus.DecreaseHealth(by: 1)
 
@@ -279,45 +288,7 @@ class GameScene: SKScene
                         currentVirus.SetActive(false)
                     }
                 }
-                
-                // Bomb
-                /*
-                if node is Bomb
-                {
-                    view?.Shake(horizontalShake: CGFloat.random(in: -50.0...50.0), verticalShake: CGFloat.random(in: -50.0...50.0))
-                 
-                    addParticle(pos: node.position, particle: explosionParticles!)
-                    
-                    let currentBomb = node as! Bomb
-                    
-                    // Look for all viruses near the bomb
-                    for virus in mActiveViruses
-                    {
-                        let dirToVirus = virus.position.ToVector() - currentBomb.position.ToVector()
-                        let distToVirus = dirToVirus.Mag()
-                        
-                        if Float(distToVirus) <= currentBomb.mExplosionRadius
-                        {
-                            virus.DecreaseHealth(by: currentBomb.mExplosionDamage)
-                            if virus.IsDead()
-                            {
-                                addParticle(pos: virus.position, particle: virusDeathParticles!)
-                                mScore += 1;
-                                mActiveViruses.remove(virus)
-                                mInactiveViruses.insert(virus)
-                            }
-                        }
-                    }
-                    
-                    // Remove bomb
-                    currentBomb.mIsAlive = false
-                    mActiveBombs.remove(currentBomb)
-                    mInactiveBombs.insert(currentBomb)
-                }
-                */
-                
             }
-            
         }
         
     }
@@ -355,6 +326,46 @@ class GameScene: SKScene
         
     }
     
+    
+    func DeactivateAllObjects()
+    {
+        
+        // Viruses
+        for virus in mActiveViruses
+        {
+            addParticle(pos: virus.position, particle: mVirusDeathParticles!)
+            mActiveViruses.remove(virus)
+            mInactiveViruses.insert(virus)
+            virus.SetActive(false)
+        }
+        
+        // Red Viruses
+        for redVirus in mActiveRedViruses
+        {
+            addParticle(pos: redVirus.position, particle: mRedVirusDeathParticles!)
+            mActiveRedViruses.remove(redVirus)
+            mInactiveRedViruses.insert(redVirus)
+            redVirus.SetActive(false)
+        }
+        
+        // Bombs
+        for bomb in mActiveBombs
+        {
+            addParticle(pos: bomb.position, particle: mExplosionParticles!)
+            mActiveBombs.remove(bomb)
+            mInactiveBombs.insert(bomb)
+            bomb.SetActive(false)
+        }
+        
+        // Pill
+        mPillObject.SetActive(false)
+        
+        // Core
+        mCore.SetActive(false)
+        mCoreHealthLabel.SetActive(false)
+        
+    }
+    
 
     override func update(_ currentTime: TimeInterval)
     {
@@ -370,12 +381,21 @@ class GameScene: SKScene
         // Check if game should end
         if mCore.IsDead()
         {
+            mGameOver = true
             mGameOverScene.mScoreFromLastGame = mScore
-
+            DeactivateAllObjects()
+            
+            let waitAction = SKAction.wait(forDuration: TimeInterval(3.0))
+            let loadAction = SKAction.run({ self.loadGameOverScene() })
+            
+            let sequence = SKAction.sequence([waitAction, loadAction])
+            
             // Load game over scene
-            loadGameOverScene()
+            self.run(sequence)
         }
 
+        // Dont run the rest of the update if the game is over
+        if mGameOver { return }
     
         // Update viruses
         for virus in mActiveViruses
@@ -477,6 +497,7 @@ class GameScene: SKScene
             // What should happen if the current bomb has hit something?
             if hasCollided
             {
+                var numberOfVirusesDestroyed : Int = 0
                 // Loop through all viruses
                 for virus in mActiveViruses
                 {
@@ -494,7 +515,7 @@ class GameScene: SKScene
                         if virus.IsDead()
                         {
                             addParticle(pos: virus.position, particle: mVirusDeathParticles!)
-                            mScore += 1;
+                            numberOfVirusesDestroyed += 1
                             mActiveViruses.remove(virus)
                             mInactiveViruses.insert(virus)
                             virus.SetActive(false)
@@ -519,7 +540,7 @@ class GameScene: SKScene
                         if redVirus.IsDead()
                         {
                             addParticle(pos: redVirus.position, particle: mRedVirusDeathParticles!)
-                            mScore += 1;
+                            numberOfVirusesDestroyed += 1
                             mActiveRedViruses.remove(redVirus)
                             mInactiveRedViruses.insert(redVirus)
                             redVirus.SetActive(false)
@@ -532,7 +553,10 @@ class GameScene: SKScene
                 // Play explosion particle
                 addParticle(pos: bomb.position, particle: mExplosionParticles!)
                 // Play explosion sound
-                mAudioSystem.PlaySound(name: "explode")
+                mAudioSystem.PlaySound(name: "Explode", from: self)
+                
+                // Give score depending on the number of viruses destroyed
+                mScore += Int(pow(Double(numberOfVirusesDestroyed), 2))
                 
                 // Manage dead bomb
                 bomb.mIsAlive = false
@@ -543,55 +567,113 @@ class GameScene: SKScene
         }
         
         // Check if pill is within range of the core
-        if CGVector.Dist(mPillObject.position, mCore.position) < 50.0
+        if mPillObject.IsActive()
         {
-            // Heal the core
-            mCore.mHealth += mPillObject.mHealingAmount
-            // Deactivate pill
-            mPillObject.mIsAlive = false
-            mPillObject.SetActive(false)
+            if CGVector.Dist(mPillObject.position, mCore.position) < 50.0
+            {
+                // Heal the core
+                mCore.mHealth += mPillObject.mHealingAmount
+                // Deactivate pill
+                mPillObject.SetActive(false)
+            }
         }
         
-        // Random spawning of viruses
-        var randomSide = Int.random(in: 0...1)
-        var randomPosY = Float.random(in: 1.0...Float(mScreenHeight))
-        var posX = randomSide == 0 ? -mVirusTexture.size().width : mScreenWidth + mVirusTexture.size().width
- 
-        var pos = CGPoint(x: posX, y: CGFloat(randomPosY))
-        
-        if mActiveViruses.count <= 5
+        // New wave can begin once all green viruses are dead
+        if mActiveViruses.count <= 0
         {
-            SpawnVirus(at: pos, health: 1, speed: 50.0, currentTime: currentTime)
-        }
-        
-        randomSide = Int.random(in: 0...1)
-        randomPosY = Float.random(in: 1.0...Float(mScreenHeight))
-        posX = randomSide == 0 ? -mVirusTexture.size().width : mScreenWidth + mVirusTexture.size().width
-        pos = CGPoint(x: posX, y: CGFloat(randomPosY))
-        
-        if mActiveRedViruses.count <= 0
-        {
-            SpawnRedVirus(at: pos, health: 1, speed: 10.0, currentTime: currentTime)
-        }
-        
-        pos = CGPoint(x: CGFloat(Float.random(in: 1.0...Float(mScreenWidth))), y: CGFloat(Float.random(in: 1.0...Float(mScreenHeight))))
-        
-        // Limit scene to 1 bomb
-        if mActiveBombs.count <= 0
-        {
-            SpawnBomb(at: pos, speed: 50.0, explosionRange: 200.0, explosionDamage: 5)
-        }
-        
-        pos = CGPoint(x: CGFloat(Float.random(in: 1.0...Float(mScreenWidth))), y: CGFloat(Float.random(in: 1.0...Float(mScreenHeight))))
-        
-        // Spawn Pill
-        if mPillObject.IsDead()
-        {
-            SpawnPill(position: pos)
+            SpawnNextWave(currentTime)
         }
         
         // Update core health label
         mCoreHealthLabel.text = "\(mCore.mHealth)"
+        
+    }
+    
+    
+    func SpawnNextWave(_ currentTime : Double)
+    {
+        
+        // Increase wave counter
+        mCurrentWave += 1
+
+        // Spawn Viruses
+        var numberOfVirusesToSpawn = Int.random(in: mCurrentWave*2...mCurrentWave*3)
+        
+        var healthMultiplier : Int = 1
+        var speedMultiplier : Float = 1.0
+        var damageMultiplier : Int = 1
+        
+        // Max number of viruses has been reached
+        if numberOfVirusesToSpawn > mNumOfViruses
+        {
+            // Apply power ups to viruses according to how many were meant to spawn
+            healthMultiplier = numberOfVirusesToSpawn / mNumOfViruses
+            speedMultiplier = Float(numberOfVirusesToSpawn / mNumOfViruses)
+            damageMultiplier = numberOfVirusesToSpawn / mNumOfViruses
+            
+            // Limit number of viruses to spawn
+            numberOfVirusesToSpawn = mNumOfViruses
+        }
+        
+        for _ in 1...numberOfVirusesToSpawn
+        {
+            let randomSide = Int.random(in: 0...1)
+            let minX = -mVirusTexture.size().width * 3
+            let maxX = mScreenWidth + mVirusTexture.size().width * 3
+            let randomPositionX = randomSide == 0
+                ? CGFloat.random(in: minX...(-mVirusTexture.size().width))
+                : CGFloat.random(in: (mScreenWidth + mVirusTexture.size().width)...maxX)
+            let randomPositionY = CGFloat.random(in: -100.0...(mScreenHeight + 100.0))
+            let randomPosition = CGPoint(x: randomPositionX, y: randomPositionY)
+            
+            SpawnVirus(at: randomPosition, health: 1 * healthMultiplier, speed: 50.0 * speedMultiplier, currentTime: currentTime, damage: 1 * damageMultiplier)
+        }
+        
+        // Spawn Red Viruses
+        if mCurrentWave % 5 == 0
+        {
+            let randomSide = Int.random(in: 0...1)
+            let minX = -mVirusTexture.size().width * 3
+            let maxX = mScreenWidth + mVirusTexture.size().width * 3
+            let randomPositionX = randomSide == 0
+                ? CGFloat.random(in: minX...(-mVirusTexture.size().width))
+                : CGFloat.random(in: (mScreenWidth + mVirusTexture.size().width)...maxX)
+            let randomPositionY = CGFloat.random(in: mScreenHeight/5...(mScreenHeight/5)*4)
+            let randomPosition = CGPoint(x: randomPositionX, y: randomPositionY)
+            
+            SpawnRedVirus(at: randomPosition, health: 1 * healthMultiplier, speed: 20.0, currentTime: currentTime, damage: 3 * damageMultiplier)
+        }
+        
+        // Spawn Bombs
+        if mActiveBombs.count <= 0
+        {
+            // Only allow bombs to spawn every 3 waves
+            if (mCurrentWave - mWaveBombLastAliveOn >= 3)
+            {
+                let randomPositionX = CGFloat.random(in: (mBombTexture.size().width/2)...(mScreenWidth-mBombTexture.size().width/2))
+                let randomPositionY = CGFloat.random(in: (mBombTexture.size().height/2)...(mScreenWidth-mBombTexture.size().height/2))
+                
+                SpawnBomb(at: CGPoint(x: randomPositionX, y: randomPositionY), speed: 20.0, explosionRange: 300.0, explosionDamage: 10)
+                mWaveBombLastAliveOn = mCurrentWave
+            }
+        }
+        else
+        {
+            // Bomb is alive this round so advance last round bomb was alive
+            mWaveBombLastAliveOn = mCurrentWave
+        }
+        
+        // Spawn Pill
+        if !mPillObject.IsActive()
+        {
+            // Pill can only spawn on every 10th wave
+            if mCurrentWave % 10 == 0
+            {
+                let randomPositionX = CGFloat.random(in: (mPillObject.size.width/2)...(mScreenWidth-mPillObject.size.width/2))
+                let randomPositionY = CGFloat.random(in: (mPillObject.size.height/2)...(mScreenWidth-mPillObject.size.height/2))
+                SpawnPill(position: CGPoint(x: randomPositionX, y: randomPositionY))
+            }
+        }
         
     }
     
@@ -608,7 +690,7 @@ class GameScene: SKScene
         return newVirus;
     }
     
-    func SpawnVirus(at p: CGPoint, health h: Int, speed s: Float, currentTime t: Double)
+    func SpawnVirus(at p: CGPoint, health h: Int, speed s: Float, currentTime t: Double, damage d: Int)
     {
         // Check if there is a virus avaliable to spawn
         if mInactiveViruses.isEmpty
@@ -625,7 +707,7 @@ class GameScene: SKScene
         // Run the virus setup
         // Activate the virus
         inactiveVirus?.position = p
-        inactiveVirus?.Setup(health: h, speed: s, timeSpawned: t, damage: 1)
+        inactiveVirus?.Setup(health: h, speed: s, timeSpawned: t, damage: d)
         inactiveVirus?.SetActive(true)
         
     }
@@ -667,7 +749,7 @@ class GameScene: SKScene
         return newRedVirus;
     }
     
-    func SpawnRedVirus(at p: CGPoint, health h: Int, speed s: Float, currentTime t: Double)
+    func SpawnRedVirus(at p: CGPoint, health h: Int, speed s: Float, currentTime t: Double, damage d: Int)
     {
         // Check if there is a red virus to spawn
         if mInactiveRedViruses.isEmpty
@@ -684,7 +766,7 @@ class GameScene: SKScene
         // Run red virus setup
         // Activate the red virus
         inactiveRedVirus?.position = p
-        inactiveRedVirus?.Setup(health: h, speed: s, timeSpawned: t, damage: 1)
+        inactiveRedVirus?.Setup(health: h, speed: s, timeSpawned: t, damage: d)
         inactiveRedVirus?.SetActive(true)
         
     }
@@ -788,10 +870,9 @@ class GameScene: SKScene
     
     func SpawnPill(position p: CGPoint)
     {
-        if mPillObject.IsDead()
+        if !mPillObject.IsActive()
         {
             mPillObject.position = p
-            mPillObject.mIsAlive = true
             mPillObject.SetActive(true)
         }
     }
@@ -837,14 +918,22 @@ class GameScene: SKScene
         if nil != mPillObject { mPillObject.SetActive(false) }
         
         // Core
-        if nil != mCore { mCore.mHealth = mCoreStartingHealth }
+        if nil != mCore
+        {
+            mCore.mHealth = mCoreStartingHealth
+            mCore.SetActive(true)
+        }
+        
+        mCoreHealthLabel.SetActive(true)
         
         // Score
         mScore = 0
         mScoreLabel.text = "SCORE: 0"
         
         // Game Settings
-        mCurrentWave = 1
+        mCurrentWave = 0
+        mWaveBombLastAliveOn = 0
+        mGameOver = false
         
         // Update audio system
         if nil != mAudioSystem { mAudioSystem.UpdateSettings() }

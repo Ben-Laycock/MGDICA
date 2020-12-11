@@ -129,7 +129,9 @@ class MainMenuScene: SKScene
         mVirusInfo.position = CGPoint(x: mScreenWidth / 3 + 75, y: mScreenHeight / 6)
         mVirusInfo.horizontalAlignmentMode = .left
         mVirusInfo.verticalAlignmentMode = .center
-        mVirusInfo.text = "Virus: Click to destroy / Hit them with bombs"
+        mVirusInfo.text = "Virus: Click to destroy / Hit them with bombs (Gets stronger per round)"
+        mVirusInfo.numberOfLines = 2
+        mVirusInfo.preferredMaxLayoutWidth = mScreenWidth / 3
         mVirusInfo.fontSize = 24
         addChild(mVirusInfo)
         
