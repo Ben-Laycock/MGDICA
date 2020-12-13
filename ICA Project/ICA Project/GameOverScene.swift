@@ -14,12 +14,18 @@ import GameplayKit
 class GameOverScene: SKScene
 {
 
+    // Scenes
     var mMainMenuScene : MainMenuScene!
     var mGameScene : GameScene!
     
+    // Screen
     let mScreenWidth = UIScreen.main.bounds.width
     let mScreenHeight = UIScreen.main.bounds.height
         
+    // Text size
+    var mTextFontSize : CGFloat = 24
+    var mTitleFontSize : CGFloat = 48
+    
     let mGameOverTitleLabel = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
     let mScoreLabel = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
     let mHighScoreLabel = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
@@ -43,6 +49,10 @@ class GameOverScene: SKScene
     
     override func didMove(to view: SKView)
     {
+        
+        // Calculate text sizes
+        mTextFontSize = mScreenHeight/15
+        mTitleFontSize = mScreenHeight/10
         
         mSavedHighScore = savedData.integer(forKey: "HighScore")
         
@@ -70,29 +80,29 @@ class GameOverScene: SKScene
         // Game over label
         mGameOverTitleLabel.position = CGPoint(x: mScreenWidth / 3 * 2, y: mScreenHeight / 4 * 3)
         mGameOverTitleLabel.text = "Game Over"
-        mGameOverTitleLabel.fontSize = 48
+        mGameOverTitleLabel.fontSize = mTitleFontSize
         addChild(mGameOverTitleLabel)
-        
-        // Score label
-        mScoreLabel.position = CGPoint(x: mScreenWidth / 3 * 2, y: mScreenHeight / 4)
-        mScoreLabel.fontSize = 48
-        addChild(mScoreLabel)
         
         // High Score label
         mHighScoreLabel.position = CGPoint(x: mScreenWidth / 3 * 2, y: mScreenHeight / 4 * 2)
-        mHighScoreLabel.fontSize = 48
+        mHighScoreLabel.fontSize = mTextFontSize
         addChild(mHighScoreLabel)
+        
+        // Score label
+        mScoreLabel.position = CGPoint(x: mScreenWidth / 3 * 2, y: mScreenHeight / 4)
+        mScoreLabel.fontSize = mTextFontSize
+        addChild(mScoreLabel)
         
         // Play again button
         mPlayAgainButton.name = "PlayAgainButton"
-        mPlayAgainButton.position = CGPoint(x: 200, y: mScreenHeight - mScreenHeight / 4)
-        mPlayAgainButton.size = SKTexture(imageNamed: "PlayAgainButton").size() * 0.3
+        mPlayAgainButton.position = CGPoint(x: 200, y: mScreenHeight / 4 * 3)
+        mPlayAgainButton.size = CGSize(width: mScreenHeight/8, height: mScreenHeight/8)
         addChild(mPlayAgainButton)
         
         // Main menu button
         mMainMenuButton.name = "MainMenuButton"
-        mMainMenuButton.position = CGPoint(x: 200, y: (mScreenHeight / 2) - mScreenHeight / 4)
-        mMainMenuButton.size = SKTexture(imageNamed: "MainMenuButton").size() * 0.3
+        mMainMenuButton.position = CGPoint(x: 200, y: mScreenHeight / 4)
+        mMainMenuButton.size = CGSize(width: mScreenHeight/8, height: mScreenHeight/8)
         addChild(mMainMenuButton)
      
         mHasCompleteSetup = true

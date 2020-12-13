@@ -39,7 +39,7 @@ class RedVirus : SKSpriteNode
         if IsDead() || !IsActive() { return }
 
         // What should be done if alive?
-        MoveToTarget(at: mTarget, precision: 100.0)
+        MoveToTarget(at: mTarget, precision: 20.0)
     }
     
     

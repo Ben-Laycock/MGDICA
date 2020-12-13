@@ -19,6 +19,8 @@ class CustomUIToggle : SKNode
     var mSelected : Bool = false
     var mOnImage = SKSpriteNode(imageNamed: "CheckboxSelected")
     var mOffImage = SKSpriteNode(imageNamed: "Checkbox")
+    var mCanDeactivateOnTouch : Bool = true
+    var mCanActivateOnTouch : Bool = true
     
     func Setup(toggleName name: String, _ view : SKScene)
     {
@@ -42,6 +44,8 @@ class CustomUIToggle : SKNode
     
     func ToggleSelected()
     {
+        if !self.IsActive() { return }
+        
         mSelected = !mSelected
         
         UpdateRender()
@@ -49,6 +53,8 @@ class CustomUIToggle : SKNode
     
     func SetSelected(_ state: Bool)
     {
+        if !self.IsActive() { return }
+        
         mSelected = state
         
         UpdateRender()
@@ -56,6 +62,8 @@ class CustomUIToggle : SKNode
     
     func UpdateRender()
     {
+        if !self.IsActive() { return }
+        
         mSelected ? mOnImage.SetActive(true) : mOnImage.SetActive(false)
         mSelected ? mOffImage.SetActive(false) : mOffImage.SetActive(true)
     }
@@ -68,11 +76,11 @@ class CustomUIToggle : SKNode
     
     func touchDetected(_ nodeName: String)
     {
-        if nodeName == mOnImage.name
+        if nodeName == mOnImage.name && mCanDeactivateOnTouch
         {
             SetSelected(false)
         }
-        if nodeName == mOffImage.name
+        if nodeName == mOffImage.name && mCanActivateOnTouch
         {
             SetSelected(true)
         }

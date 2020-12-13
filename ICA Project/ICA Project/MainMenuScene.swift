@@ -18,24 +18,27 @@ class MainMenuScene: SKScene
     
     let mScreenWidth = UIScreen.main.bounds.width
     let mScreenHeight = UIScreen.main.bounds.height
-        
-    let mMainMenuTitleLabel = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
     
     // Main Menu
+    let mMainMenuTitleLabel = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
     let mPlayButton = SKSpriteNode(imageNamed: "PlayButton")
     let mOptionsButton = SKSpriteNode(imageNamed: "OptionsButton")
     let mInfoButton = SKSpriteNode(imageNamed: "InfoButton")
     
     
     // Options Menu
+    let mSettingsTitleLabel = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
     let mOptionsBackButton = SKSpriteNode(imageNamed: "ConfirmButton")
     let mAudioOptionLabel = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
+    let mDifficultyOptionLabel = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
     
     var mAudioEnabled : Bool = true
     var mDifficultySetting : Int = 1
     
     var mAudioToggle = CustomUIToggle()
     var mEasyDifficultyToggle = CustomUIToggle()
+    var mMediumDifficultyToggle = CustomUIToggle()
+    var mHardDifficultyToggle = CustomUIToggle()
 
     
     // Info Menu
@@ -53,7 +56,9 @@ class MainMenuScene: SKScene
     let mCoreInfo = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
     
     // Settings
+    var mTitleFontSize : CGFloat = 48
     var mInfoFontSize : CGFloat = 24
+    var mToggleSize : CGFloat = 50
     
     var mSavedData = UserDefaults.standard
     var mHasCompleteSetup : Bool = false
@@ -65,17 +70,23 @@ class MainMenuScene: SKScene
         mAudioEnabled = mSavedData.bool(forKey: "AudioEnabled")
         
         mDifficultySetting = mSavedData.integer(forKey: "Difficulty")
-        if mDifficultySetting == 0 { mSavedData.set(1, forKey: "Difficulty") }
+        if mDifficultySetting == 0
+        {
+            mSavedData.set(1, forKey: "Difficulty")
+            mDifficultySetting = 1
+        }
         
         // Exit function if setup has previously been completed
         if mHasCompleteSetup { return }
         
-        mInfoFontSize = mScreenHeight/20
+        mTitleFontSize = mScreenHeight/15
+        mInfoFontSize = mScreenHeight/30
+        mToggleSize = mScreenHeight/15
         
         // ===================  Main menu setup  ===================
         mMainMenuTitleLabel.position = CGPoint(x: mScreenWidth / 2, y: mScreenHeight / 4 * 3)
         mMainMenuTitleLabel.text = "Main Menu"
-        mMainMenuTitleLabel.fontSize = 48
+        mMainMenuTitleLabel.fontSize = mTitleFontSize
         addChild(mMainMenuTitleLabel)
         
         // Play button
@@ -98,33 +109,73 @@ class MainMenuScene: SKScene
         
         
         // ===================  Options menu setup  ===================
+        mSettingsTitleLabel.verticalAlignmentMode = .center
+        mSettingsTitleLabel.horizontalAlignmentMode = .left
+        mSettingsTitleLabel.text = "Settings"
+        mSettingsTitleLabel.fontSize = mTitleFontSize
+        mSettingsTitleLabel.position = CGPoint(
+        x: mScreenWidth / 2,
+        y: mScreenHeight / 6 * 5)
+        addChild(mSettingsTitleLabel)
+        
         mOptionsBackButton.name = "OptionsBackButton"
-        mOptionsBackButton.position = CGPoint(x: 10 + SKTexture(imageNamed: "PlayButton").size().width / 2,
-                                       y: mScreenHeight / 6 * 5)
-        mOptionsBackButton.size = SKTexture(imageNamed: "ConfirmButton").size() * 0.3
+        mOptionsBackButton.position = CGPoint(x: mScreenHeight/8,
+                                              y: mScreenHeight / 6 * 5)
+        mOptionsBackButton.size = CGSize(width: mScreenHeight/8, height: mScreenHeight/8)
         addChild(mOptionsBackButton)
         
-        mAudioOptionLabel.position = CGPoint(x: mScreenWidth / 3, y: mScreenHeight / 2)
         mAudioOptionLabel.verticalAlignmentMode = .center
+        mAudioOptionLabel.horizontalAlignmentMode = .left
         mAudioOptionLabel.text = "Audio"
-        mAudioOptionLabel.fontSize = 36
+        mAudioOptionLabel.fontSize = mInfoFontSize
+        mAudioOptionLabel.position = CGPoint(x: mScreenWidth / 2, y: mScreenHeight / 6 * 4)
         addChild(mAudioOptionLabel)
         
-        mAudioToggle.SetScale(mScreenHeight/10, mScreenHeight/10)
-        mAudioToggle.position = CGPoint(x: mScreenWidth / 3 + mAudioOptionLabel.frame.width/2 + mAudioToggle.mOnImage.size.width/2 + 20, y: mScreenHeight / 2)
+        mAudioToggle.SetScale(mToggleSize, mToggleSize)
+        mAudioToggle.position = CGPoint(
+            x: mScreenWidth / 2 + mAudioOptionLabel.frame.width + mToggleSize/2 + 20,
+            y: mScreenHeight / 6 * 4)
         mAudioToggle.Setup(toggleName: "Audio", self)
         mAudioToggle.SetSelected(mAudioEnabled)
         
-        mEasyDifficultyToggle.position = CGPoint(x: 100.0, y: 100.0)
+        
+        mDifficultyOptionLabel.verticalAlignmentMode = .center
+        mDifficultyOptionLabel.horizontalAlignmentMode = .left
+        mDifficultyOptionLabel.text = "Difficulty"
+        mDifficultyOptionLabel.fontSize = mInfoFontSize
+        mDifficultyOptionLabel.position = CGPoint(x: mScreenWidth / 2, y: mScreenHeight / 6 * 3)
+        addChild(mDifficultyOptionLabel)
+        
+        mEasyDifficultyToggle.SetScale(mToggleSize, mToggleSize)
+        mEasyDifficultyToggle.position = CGPoint(
+            x: mScreenWidth / 2 + mDifficultyOptionLabel.frame.width + mToggleSize/2 + 20,
+            y: mScreenHeight / 6 * 3)
         mEasyDifficultyToggle.Setup(toggleName: "EasyDifficulty", self)
-        mEasyDifficultyToggle.SetScale(mScreenHeight/10, mScreenHeight/10)
+        mEasyDifficultyToggle.SetSelected(mDifficultySetting == 1)
+        mEasyDifficultyToggle.mCanDeactivateOnTouch = false
+        
+        mMediumDifficultyToggle.SetScale(mToggleSize, mToggleSize)
+        mMediumDifficultyToggle.position = CGPoint(
+            x: mScreenWidth / 2 + mDifficultyOptionLabel.frame.width + mToggleSize/2 * 3 + 20 * 2,
+            y: mScreenHeight / 6 * 3)
+        mMediumDifficultyToggle.Setup(toggleName: "MediumDifficulty", self)
+        mMediumDifficultyToggle.SetSelected(mDifficultySetting == 2)
+        mMediumDifficultyToggle.mCanDeactivateOnTouch = false
+        
+        mHardDifficultyToggle.SetScale(mToggleSize, mToggleSize)
+        mHardDifficultyToggle.position = CGPoint(
+            x: mScreenWidth / 2 + mDifficultyOptionLabel.frame.width + mToggleSize/2 * 5 + 20 * 3,
+            y: mScreenHeight / 6 * 3)
+        mHardDifficultyToggle.Setup(toggleName: "HardDifficulty", self)
+        mHardDifficultyToggle.SetSelected(mDifficultySetting == 3)
+        mHardDifficultyToggle.mCanDeactivateOnTouch = false
         
         
         // ===================  Info menu setup  ===================
         mInfoBackButton.name = "InfoBackButton"
-        mInfoBackButton.position = CGPoint(x: 10 + SKTexture(imageNamed: "PlayButton").size().width / 2,
+        mInfoBackButton.position = CGPoint(x: mScreenHeight/8,
                                        y: mScreenHeight / 6 * 5)
-        mInfoBackButton.size = SKTexture(imageNamed: "CancelButton").size() * 0.3
+        mInfoBackButton.size = CGSize(width: mScreenHeight/8, height: mScreenHeight/8)
         addChild(mInfoBackButton)
         
         // Virus
@@ -151,7 +202,7 @@ class MainMenuScene: SKScene
         mRedVirusInfo.position = CGPoint(x: mScreenWidth / 3 + 75, y: mScreenHeight / 6 * 2)
         mRedVirusInfo.horizontalAlignmentMode = .left
         mRedVirusInfo.verticalAlignmentMode = .center
-        mRedVirusInfo.text = "Red Virus: Swipe away / Hit with bombs"
+        mRedVirusInfo.text = "Red Virus: Swipe left / right to keep them away from the Core / Hit with bombs to destroy"
         mRedVirusInfo.numberOfLines = 2
         mRedVirusInfo.preferredMaxLayoutWidth = mScreenWidth / 2
         mRedVirusInfo.fontSize = mInfoFontSize
@@ -287,19 +338,34 @@ class MainMenuScene: SKScene
                 mSavedData.set(false, forKey: "AudioEnabled")
             }
             
+            mEasyDifficultyToggle.touchDetected(touchedName)
+            if mEasyDifficultyToggle.IsSelected()
+            {
+                mDifficultySetting = 1
+                mSavedData.set(mDifficultySetting, forKey: "Difficulty")
+                mMediumDifficultyToggle.SetSelected(false)
+                mHardDifficultyToggle.SetSelected(false)
+            }
+            
+            mMediumDifficultyToggle.touchDetected(touchedName)
+            if mMediumDifficultyToggle.IsSelected()
+            {
+                mDifficultySetting = 2
+                mSavedData.set(mDifficultySetting, forKey: "Difficulty")
+                mEasyDifficultyToggle.SetSelected(false)
+                mHardDifficultyToggle.SetSelected(false)
+            }
+            
+            mHardDifficultyToggle.touchDetected(touchedName)
+            if mHardDifficultyToggle.IsSelected()
+            {
+                mDifficultySetting = 3
+                mSavedData.set(mDifficultySetting, forKey: "Difficulty")
+                mEasyDifficultyToggle.SetSelected(false)
+                mMediumDifficultyToggle.SetSelected(false)
+            }
         }
         
-    }
-    
-    
-    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?)
-    {
-        
-    }
-    
-    
-    override func update(_ currentTime: TimeInterval)
-    {
     }
     
     
@@ -314,10 +380,15 @@ class MainMenuScene: SKScene
     
     func ToggleOptionsMenu(on status: Bool)
     {
+        mSettingsTitleLabel.SetActive(status)
         mOptionsBackButton.SetActive(status)
         mAudioOptionLabel.SetActive(status)
-
+        mDifficultyOptionLabel.SetActive(status)
+        
         mAudioToggle.Toggle(status)
+        mEasyDifficultyToggle.Toggle(status)
+        mMediumDifficultyToggle.Toggle(status)
+        mHardDifficultyToggle.Toggle(status)
     }
     
     

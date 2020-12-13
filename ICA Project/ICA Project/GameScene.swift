@@ -31,6 +31,10 @@ class GameScene: SKScene
     let mPillTexture = SKTexture(imageNamed: "Pill")
     let mBoomTexture = SKTexture(imageNamed: "BOOM")
     
+    // Text size
+    var mTextFontSize : CGFloat = 24
+    var mTitleFontSize : CGFloat = 48
+    
     // Viruses
     let mNumOfViruses = 50
     var mActiveViruses = Set<Virus>()
@@ -54,7 +58,6 @@ class GameScene: SKScene
     var mCore : Core!
     
     // Game Settings
-    var mCurrentWave : Int = 0
     var mWaveBombLastAliveOn : Int = 0
     var mGameOver : Bool = false
     
@@ -71,6 +74,16 @@ class GameScene: SKScene
         }
     }
     
+    // Round Counter
+    let mCuurrentWaveLabel = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
+    var mCurrentWave : Int = 0
+    {
+        didSet
+        {
+            mCuurrentWaveLabel.text = "Wave: \(mCurrentWave)"
+        }
+    }
+    
     // Core Health Display
     let mCoreHealthLabel = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
     
@@ -84,6 +97,8 @@ class GameScene: SKScene
     let mExplosionParticles = SKEmitterNode(fileNamed: "Explosion.sks")
     let mVirusDeathParticles = SKEmitterNode(fileNamed: "VirusDestruction.sks")
     let mRedVirusDeathParticles = SKEmitterNode(fileNamed: "RedVirusDestruction.sks")
+    let mCoreDeathParticles = SKEmitterNode(fileNamed: "CoreDestruction.sks")
+    let mHealParticles = SKEmitterNode(fileNamed: "Heal.sks")
 
     // Gestures
     var mSwipeRightGR : UISwipeGestureRecognizer!
@@ -93,6 +108,12 @@ class GameScene: SKScene
     // Audio System
     var mAudioSystem : AudioSystem!
     
+    // Saved Data
+    let mSavedData = UserDefaults.standard
+    
+    // Loaded saved data
+    var mDifficultySetting : Int = 1
+    
     var mHasCompleteSetup : Bool = false
     
     
@@ -100,6 +121,11 @@ class GameScene: SKScene
     {
         
         mGameOver = false
+        mDifficultySetting = mSavedData.integer(forKey: "Difficulty")
+        
+        // Calculate text sizes
+        mTextFontSize = mScreenHeight/15
+        mTitleFontSize = mScreenHeight/10
         
         if mHasCompleteSetup { return }
         
@@ -139,15 +165,22 @@ class GameScene: SKScene
         addChild(mPillObject)
         
         // Score label
-        mScoreLabel.fontSize = 72
+        mScoreLabel.fontSize = mTitleFontSize
         mScoreLabel.position = CGPoint(x: mScreenWidth/2, y: mScoreLabel.fontSize/2)
         mScoreLabel.text = "SCORE: 0"
         mScoreLabel.zPosition = 100
         mScoreLabel.horizontalAlignmentMode = .center
         addChild(mScoreLabel)
         
+        mCuurrentWaveLabel.fontSize = mTextFontSize
+        mCuurrentWaveLabel.position = CGPoint(x: 10, y: mScreenHeight - mCuurrentWaveLabel.fontSize - 10)
+        mCuurrentWaveLabel.text = "SCORE: 0"
+        mCuurrentWaveLabel.zPosition = 100
+        mCuurrentWaveLabel.horizontalAlignmentMode = .left
+        addChild(mCuurrentWaveLabel)
+        
         // Core health label
-        mCoreHealthLabel.fontSize = 48
+        mCoreHealthLabel.fontSize = mTextFontSize
         mCoreHealthLabel.position = CGPoint(x: mScreenWidth/2, y: mScreenHeight/2)
         mCoreHealthLabel.text = "\(mCore.mHealth)"
         mCoreHealthLabel.zPosition = 100
@@ -360,6 +393,7 @@ class GameScene: SKScene
         mPillObject.SetActive(false)
         
         // Core
+        addParticle(pos: mCore.position, particle: mCoreDeathParticles!)
         mCore.SetActive(false)
         mCoreHealthLabel.SetActive(false)
         
@@ -378,7 +412,7 @@ class GameScene: SKScene
         
         
         // Check if game should end
-        if mCore.IsDead()
+        if mCore.IsDead() && !mGameOver
         {
             mGameOver = true
             mGameOverScene.mScoreFromLastGame = mScore
@@ -570,6 +604,7 @@ class GameScene: SKScene
         {
             if CGVector.Dist(mPillObject.position, mCore.position) < 50.0
             {
+                addParticle(pos: mPillObject.position, particle: mHealParticles!)
                 // Heal the core
                 mCore.mHealth += mPillObject.mHealingAmount
                 // Deactivate pill
@@ -613,6 +648,11 @@ class GameScene: SKScene
             // Limit number of viruses to spawn
             numberOfVirusesToSpawn = mNumOfViruses
         }
+        
+        // Apply difficulty multipliers
+        healthMultiplier *= mDifficultySetting
+        speedMultiplier += Float(mDifficultySetting-1)
+        damageMultiplier *= mDifficultySetting
         
         for _ in 1...numberOfVirusesToSpawn
         {
@@ -669,7 +709,8 @@ class GameScene: SKScene
             if mCurrentWave % 10 == 0
             {
                 let randomPositionX = CGFloat.random(in: (mPillObject.size.width/2)...(mScreenWidth-mPillObject.size.width/2))
-                let randomPositionY = CGFloat.random(in: (mPillObject.size.height/2)...(mScreenWidth-mPillObject.size.height/2))
+                let randomPositionY = CGFloat.random(in: (mPillObject.size.height/2)...(mScreenHeight-mPillObject.size.height/2))
+                
                 SpawnPill(position: CGPoint(x: randomPositionX, y: randomPositionY))
             }
         }

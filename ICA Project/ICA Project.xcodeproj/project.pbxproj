@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B50238B5258681FF0077F464 /* CoreDestruction.sks in Resources */ = {isa = PBXBuildFile; fileRef = B50238B4258681FF0077F464 /* CoreDestruction.sks */; };
+		B50238B92586829B0077F464 /* Heal.sks in Resources */ = {isa = PBXBuildFile; fileRef = B50238B82586829B0077F464 /* Heal.sks */; };
 		B50709F9257AC21A000DED42 /* VirusDestruction.sks in Resources */ = {isa = PBXBuildFile; fileRef = B50709F8257AC21A000DED42 /* VirusDestruction.sks */; };
 		B514657D257A884A0013CD4E /* Explosion.sks in Resources */ = {isa = PBXBuildFile; fileRef = B514657C257A884A0013CD4E /* Explosion.sks */; };
 		B52E032B2580274A00ECD9DC /* RedVirusDestruction.sks in Resources */ = {isa = PBXBuildFile; fileRef = B52E032A2580274A00ECD9DC /* RedVirusDestruction.sks */; };
@@ -59,6 +61,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B50238B4258681FF0077F464 /* CoreDestruction.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = CoreDestruction.sks; sourceTree = "<group>"; };
+		B50238B82586829B0077F464 /* Heal.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Heal.sks; sourceTree = "<group>"; };
 		B50709F8257AC21A000DED42 /* VirusDestruction.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = VirusDestruction.sks; sourceTree = "<group>"; };
 		B514657C257A884A0013CD4E /* Explosion.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Explosion.sks; sourceTree = "<group>"; };
 		B52E032A2580274A00ECD9DC /* RedVirusDestruction.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = RedVirusDestruction.sks; sourceTree = "<group>"; };
@@ -125,6 +129,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B50238B3258680620077F464 /* Objects */ = {
+			isa = PBXGroup;
+			children = (
+				B5372103257C3740003FD35A /* RedVirus.swift */,
+				B5DEA9CF2577F5B4001533CA /* Bomb.swift */,
+				B58D672C2582D4DB008B068F /* Pill.swift */,
+				B5DEA9D52578293E001533CA /* Core.swift */,
+				B52F48A025757F2A00B043DF /* Virus.swift */,
+			);
+			name = Objects;
+			sourceTree = "<group>";
+		};
 		B5D2F046258581DB00A35D46 /* CustomUI */ = {
 			isa = PBXGroup;
 			children = (
@@ -165,6 +181,8 @@
 				B50709F8257AC21A000DED42 /* VirusDestruction.sks */,
 				B52E032A2580274A00ECD9DC /* RedVirusDestruction.sks */,
 				B514657C257A884A0013CD4E /* Explosion.sks */,
+				B50238B4258681FF0077F464 /* CoreDestruction.sks */,
+				B50238B82586829B0077F464 /* Heal.sks */,
 			);
 			name = Particles;
 			sourceTree = "<group>";
@@ -205,13 +223,9 @@
 				DBF79F162554450B00199755 /* Actions.sks */,
 				B5D2F04D258582C500A35D46 /* Particles */,
 				B5D2F04C258582A500A35D46 /* Extensions */,
-				B52F48A025757F2A00B043DF /* Virus.swift */,
 				B52E032C2580387400ECD9DC /* AudioSystem.swift */,
-				B5372103257C3740003FD35A /* RedVirus.swift */,
-				B5DEA9CF2577F5B4001533CA /* Bomb.swift */,
-				B58D672C2582D4DB008B068F /* Pill.swift */,
-				B5DEA9D52578293E001533CA /* Core.swift */,
 				DBF79F1A2554450B00199755 /* GameViewController.swift */,
+				B50238B3258680620077F464 /* Objects */,
 				B5D2F04B2585826B00A35D46 /* Scenes */,
 				B5D2F046258581DB00A35D46 /* CustomUI */,
 				DBF79F1C2554450B00199755 /* Main.storyboard */,
@@ -347,11 +361,13 @@
 			files = (
 				DBAAA871256FF9640066E892 /* Sounds in Resources */,
 				DBE7BFBB2573C0F5005D711A /* MainMenuScene.sks in Resources */,
+				B50238B92586829B0077F464 /* Heal.sks in Resources */,
 				DBF79F1E2554450B00199755 /* Main.storyboard in Resources */,
 				B52E032B2580274A00ECD9DC /* RedVirusDestruction.sks in Resources */,
 				DBF79F152554450B00199755 /* GameScene.sks in Resources */,
 				B5DEA9DA25784183001533CA /* GameOverScene.sks in Resources */,
 				DBF79F202554450D00199755 /* Assets.xcassets in Resources */,
+				B50238B5258681FF0077F464 /* CoreDestruction.sks in Resources */,
 				B50709F9257AC21A000DED42 /* VirusDestruction.sks in Resources */,
 				DBF79F232554450D00199755 /* LaunchScreen.storyboard in Resources */,
 				DBF79F172554450B00199755 /* Actions.sks in Resources */,
