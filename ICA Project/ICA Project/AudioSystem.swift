@@ -15,6 +15,10 @@ class AudioSystem
     // Sounds
     var pop1 : SKAction!
     var explode : SKAction!
+    var buttonClick : SKAction!
+    var toggle : SKAction!
+    var heal : SKAction!
+    var confirm : SKAction!
     
     // Saved Data
     var mSaveData = UserDefaults.standard
@@ -31,6 +35,10 @@ class AudioSystem
         // Sounds
         pop1 = SKAction.playSoundFileNamed("Sounds/Pop1.mp3", waitForCompletion: true)
         explode = SKAction.playSoundFileNamed("Sounds/Explosion.wav", waitForCompletion: true)
+        buttonClick = SKAction.playSoundFileNamed("Sounds/ButtonClick.wav", waitForCompletion: true)
+        toggle = SKAction.playSoundFileNamed("Sounds/Toggle.wav", waitForCompletion: true)
+        heal = SKAction.playSoundFileNamed("Sounds/Heal.wav", waitForCompletion: true)
+        confirm = SKAction.playSoundFileNamed("Sounds/Confirm.wav", waitForCompletion: true)
     }
     
     
@@ -51,6 +59,14 @@ class AudioSystem
             scene.run(pop1)
         case "explode":
             scene.run(explode)
+        case "click":
+        scene.run(buttonClick)
+        case "toggle":
+            scene.run(toggle)
+        case "heal":
+            scene.run(heal)
+        case "confirm":
+            scene.run(confirm)
         default:
             print("No sound was specified!")
         }

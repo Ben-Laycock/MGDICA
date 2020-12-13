@@ -20,17 +20,17 @@ class MainMenuScene: SKScene
     let mScreenHeight = UIScreen.main.bounds.height
     
     // Main Menu
-    let mMainMenuTitleLabel = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
+    let mMainMenuTitleLabel = SKLabelNode(fontNamed: "Noteworthy Bold")
     let mPlayButton = SKSpriteNode(imageNamed: "PlayButton")
     let mOptionsButton = SKSpriteNode(imageNamed: "OptionsButton")
     let mInfoButton = SKSpriteNode(imageNamed: "InfoButton")
     
     
     // Options Menu
-    let mSettingsTitleLabel = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
+    let mSettingsTitleLabel = SKLabelNode(fontNamed: "Noteworthy Bold")
     let mOptionsBackButton = SKSpriteNode(imageNamed: "ConfirmButton")
-    let mAudioOptionLabel = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
-    let mDifficultyOptionLabel = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
+    let mAudioOptionLabel = SKLabelNode(fontNamed: "Noteworthy Bold")
+    let mDifficultyOptionLabel = SKLabelNode(fontNamed: "Noteworthy Bold")
     
     var mAudioEnabled : Bool = true
     var mDifficultySetting : Int = 1
@@ -49,25 +49,28 @@ class MainMenuScene: SKScene
     let mPillImage = SKSpriteNode(imageNamed: "Pill")
     let mCoreImage = SKSpriteNode(imageNamed: "Core")
     
-    let mVirusInfo = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
-    let mRedVirusInfo = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
-    let mBombInfo = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
-    let mPillInfo = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
-    let mCoreInfo = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
+    let mVirusInfo = SKLabelNode(fontNamed: "Noteworthy Bold")
+    let mRedVirusInfo = SKLabelNode(fontNamed: "Noteworthy Bold")
+    let mBombInfo = SKLabelNode(fontNamed: "Noteworthy Bold")
+    let mPillInfo = SKLabelNode(fontNamed: "Noteworthy Bold")
+    let mCoreInfo = SKLabelNode(fontNamed: "Noteworthy Bold")
     
     // Settings
     var mTitleFontSize : CGFloat = 48
     var mInfoFontSize : CGFloat = 24
     var mToggleSize : CGFloat = 50
     
+    // Audio System
+    var mAudioSystem : AudioSystem!
+    
     var mSavedData = UserDefaults.standard
     var mHasCompleteSetup : Bool = false
-    
     
     override func didMove(to view: SKView)
     {
         
         mAudioEnabled = mSavedData.bool(forKey: "AudioEnabled")
+        if nil != mAudioSystem { mAudioSystem.UpdateSettings() }
         
         mDifficultySetting = mSavedData.integer(forKey: "Difficulty")
         if mDifficultySetting == 0
@@ -232,7 +235,7 @@ class MainMenuScene: SKScene
         mPillInfo.position = CGPoint(x: mScreenWidth / 3 + 75, y: mScreenHeight / 6 * 4)
         mPillInfo.horizontalAlignmentMode = .left
         mPillInfo.verticalAlignmentMode = .center
-        mPillInfo.text = "Pill: Drag to the core to heal it"
+        mPillInfo.text = "Pill: Drag to the core to heal it (Can't have more health than you started with)"
         mPillInfo.numberOfLines = 2
         mPillInfo.preferredMaxLayoutWidth = mScreenWidth / 2
         mPillInfo.fontSize = mInfoFontSize
@@ -256,6 +259,10 @@ class MainMenuScene: SKScene
         // Disable info menu
         ToggleOptionsMenu(on: false)
         ToggleInfoMenu(on: false)
+        
+        // Setup audio system
+        mAudioSystem = AudioSystem()
+        mAudioSystem.Setup()
         
         mHasCompleteSetup = true
         
@@ -289,11 +296,13 @@ class MainMenuScene: SKScene
             // Main Menu
             if node.name == "PlayButton"
             {
+                mAudioSystem.PlaySound(name: "click", from: self)
                 loadScene()
             }
             
             if node.name == "InfoButton"
             {
+                mAudioSystem.PlaySound(name: "click", from: self)
                 ToggleMainMenu(on: false)
                 ToggleOptionsMenu(on: false)
                 ToggleInfoMenu(on: true)
@@ -301,6 +310,7 @@ class MainMenuScene: SKScene
             
             if node.name == "OptionsButton"
             {
+                mAudioSystem.PlaySound(name: "click", from: self)
                 ToggleMainMenu(on: false)
                 ToggleInfoMenu(on: false)
                 ToggleOptionsMenu(on: true)
@@ -310,6 +320,7 @@ class MainMenuScene: SKScene
             // Info Menu
             if node.name == "InfoBackButton"
             {
+                mAudioSystem.PlaySound(name: "click", from: self)
                 ToggleInfoMenu(on: false)
                 ToggleOptionsMenu(on: false)
                 ToggleMainMenu(on: true)
@@ -319,6 +330,7 @@ class MainMenuScene: SKScene
             // Options menu
             if node.name == "OptionsBackButton"
             {
+                mAudioSystem.PlaySound(name: "confirm", from: self)
                 ToggleInfoMenu(on: false)
                 ToggleOptionsMenu(on: false)
                 ToggleMainMenu(on: true)
@@ -326,19 +338,21 @@ class MainMenuScene: SKScene
             
             let touchedName = String(node.name ?? "none")
             
-            mAudioToggle.touchDetected(touchedName)
+            if mAudioToggle.touchDetected(touchedName) { mAudioSystem.PlaySound(name: "toggle", from: self) }
             if mAudioToggle.IsSelected()
             {
                 mAudioEnabled = true
                 mSavedData.set(true, forKey: "AudioEnabled")
+                mAudioSystem.UpdateSettings()
             }
             else
             {
                 mAudioEnabled = false
                 mSavedData.set(false, forKey: "AudioEnabled")
+                mAudioSystem.UpdateSettings()
             }
             
-            mEasyDifficultyToggle.touchDetected(touchedName)
+            if mEasyDifficultyToggle.touchDetected(touchedName) { mAudioSystem.PlaySound(name: "toggle", from: self) }
             if mEasyDifficultyToggle.IsSelected()
             {
                 mDifficultySetting = 1
@@ -347,7 +361,7 @@ class MainMenuScene: SKScene
                 mHardDifficultyToggle.SetSelected(false)
             }
             
-            mMediumDifficultyToggle.touchDetected(touchedName)
+            if mMediumDifficultyToggle.touchDetected(touchedName) { mAudioSystem.PlaySound(name: "toggle", from: self) }
             if mMediumDifficultyToggle.IsSelected()
             {
                 mDifficultySetting = 2
@@ -356,7 +370,7 @@ class MainMenuScene: SKScene
                 mHardDifficultyToggle.SetSelected(false)
             }
             
-            mHardDifficultyToggle.touchDetected(touchedName)
+            if mHardDifficultyToggle.touchDetected(touchedName) { mAudioSystem.PlaySound(name: "toggle", from: self) }
             if mHardDifficultyToggle.IsSelected()
             {
                 mDifficultySetting = 3

@@ -19,7 +19,7 @@ class RedVirus : SKSpriteNode
     var mMovementSpeed : Float = 0.0
     var mTimeSpawned : Double = 0.0
     var mDamage : Int = 1
-    var mMaxSpeed : CGFloat = 200.0
+    var mMaxSpeed : CGFloat = 400.0
     var mCanMoveToTarget : Bool = true
 
     var mTarget : CGPoint = CGPoint.zero

@@ -74,16 +74,20 @@ class CustomUIToggle : SKNode
         mOffImage.size = CGSize(width: scaleX, height: scaleY)
     }
     
-    func touchDetected(_ nodeName: String)
+    func touchDetected(_ nodeName: String) -> (Bool)
     {
         if nodeName == mOnImage.name && mCanDeactivateOnTouch
         {
             SetSelected(false)
+            return true
         }
         if nodeName == mOffImage.name && mCanActivateOnTouch
         {
             SetSelected(true)
+            return true
         }
+        
+        return false
     }
     
     func Toggle(_ b: Bool)

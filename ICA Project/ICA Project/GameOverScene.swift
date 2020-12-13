@@ -26,9 +26,9 @@ class GameOverScene: SKScene
     var mTextFontSize : CGFloat = 24
     var mTitleFontSize : CGFloat = 48
     
-    let mGameOverTitleLabel = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
-    let mScoreLabel = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
-    let mHighScoreLabel = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
+    let mGameOverTitleLabel = SKLabelNode(fontNamed: "Noteworthy Bold")
+    let mScoreLabel = SKLabelNode(fontNamed: "Noteworthy Bold")
+    let mHighScoreLabel = SKLabelNode(fontNamed: "Noteworthy Bold")
     
     let mPlayAgainButton = SKSpriteNode(imageNamed: "PlayAgainButton")
     let mMainMenuButton = SKSpriteNode(imageNamed: "MainMenuButton")
@@ -42,6 +42,9 @@ class GameOverScene: SKScene
     // New high score?
     var mNewHighScore : Bool = false
     
+    // Audio System
+    var mAudioSystem : AudioSystem!
+    
     let savedData = UserDefaults.standard
     
     var mHasCompleteSetup = false
@@ -53,6 +56,8 @@ class GameOverScene: SKScene
         // Calculate text sizes
         mTextFontSize = mScreenHeight/15
         mTitleFontSize = mScreenHeight/10
+        
+        if nil != mAudioSystem { mAudioSystem.UpdateSettings() }
         
         mSavedHighScore = savedData.integer(forKey: "HighScore")
         
@@ -67,7 +72,7 @@ class GameOverScene: SKScene
         
         if mNewHighScore
         {
-            mHighScoreLabel.text = "NEW High Score: \(mSavedHighScore)"
+            mHighScoreLabel.text = "New High Score: \(mSavedHighScore)"
         }
         else
         {
@@ -105,6 +110,10 @@ class GameOverScene: SKScene
         mMainMenuButton.size = CGSize(width: mScreenHeight/8, height: mScreenHeight/8)
         addChild(mMainMenuButton)
      
+        // Setup audio system
+        mAudioSystem = AudioSystem()
+        mAudioSystem.Setup()
+        
         mHasCompleteSetup = true
         
     }
@@ -113,6 +122,8 @@ class GameOverScene: SKScene
     func loadGameScene()
     {
         if !mGameScene.ResetScene() { return }
+     
+        mAudioSystem.PlaySound(name: "click", from: self)
         
         view?.presentScene(mGameScene, transition: .reveal(with: SKTransitionDirection.down, duration: 1.0))
     }
@@ -120,6 +131,8 @@ class GameOverScene: SKScene
     
     func loadMainMenuScene()
     {
+        mAudioSystem.PlaySound(name: "click", from: self)
+        
         view?.presentScene(mMainMenuScene, transition: .reveal(with: SKTransitionDirection.right, duration: 1.0))
     }
     

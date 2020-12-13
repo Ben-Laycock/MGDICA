@@ -11,6 +11,7 @@
 		B50238B92586829B0077F464 /* Heal.sks in Resources */ = {isa = PBXBuildFile; fileRef = B50238B82586829B0077F464 /* Heal.sks */; };
 		B50709F9257AC21A000DED42 /* VirusDestruction.sks in Resources */ = {isa = PBXBuildFile; fileRef = B50709F8257AC21A000DED42 /* VirusDestruction.sks */; };
 		B514657D257A884A0013CD4E /* Explosion.sks in Resources */ = {isa = PBXBuildFile; fileRef = B514657C257A884A0013CD4E /* Explosion.sks */; };
+		B528ADFC2586BE4300B5830C /* CustomUIProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B528ADFB2586BE4300B5830C /* CustomUIProgressBar.swift */; };
 		B52E032B2580274A00ECD9DC /* RedVirusDestruction.sks in Resources */ = {isa = PBXBuildFile; fileRef = B52E032A2580274A00ECD9DC /* RedVirusDestruction.sks */; };
 		B52E032D2580387400ECD9DC /* AudioSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B52E032C2580387400ECD9DC /* AudioSystem.swift */; };
 		B52F48A125757F2A00B043DF /* Virus.swift in Sources */ = {isa = PBXBuildFile; fileRef = B52F48A025757F2A00B043DF /* Virus.swift */; };
@@ -65,6 +66,7 @@
 		B50238B82586829B0077F464 /* Heal.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Heal.sks; sourceTree = "<group>"; };
 		B50709F8257AC21A000DED42 /* VirusDestruction.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = VirusDestruction.sks; sourceTree = "<group>"; };
 		B514657C257A884A0013CD4E /* Explosion.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Explosion.sks; sourceTree = "<group>"; };
+		B528ADFB2586BE4300B5830C /* CustomUIProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomUIProgressBar.swift; sourceTree = "<group>"; };
 		B52E032A2580274A00ECD9DC /* RedVirusDestruction.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = RedVirusDestruction.sks; sourceTree = "<group>"; };
 		B52E032C2580387400ECD9DC /* AudioSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioSystem.swift; sourceTree = "<group>"; };
 		B52F48A025757F2A00B043DF /* Virus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Virus.swift; sourceTree = "<group>"; };
@@ -145,6 +147,7 @@
 			isa = PBXGroup;
 			children = (
 				B5D2F04325857CCB00A35D46 /* CustomUIToggle.swift */,
+				B528ADFB2586BE4300B5830C /* CustomUIProgressBar.swift */,
 			);
 			name = CustomUI;
 			sourceTree = "<group>";
@@ -413,6 +416,7 @@
 				DBE7BFBD2573C122005D711A /* MainMenuScene.swift in Sources */,
 				B5A4FDED2577A02300B89EBC /* CGSizeExtensions.swift in Sources */,
 				B5DEA9D825783971001533CA /* UIViewExtensions.swift in Sources */,
+				B528ADFC2586BE4300B5830C /* CustomUIProgressBar.swift in Sources */,
 				DBF79F132554450B00199755 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

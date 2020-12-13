@@ -56,13 +56,17 @@ class GameScene: SKScene
     // Core
     let mCoreStartingHealth = 20
     var mCore : Core!
+    var mCoreHealthBar = CustomUIProgressBar()
+    
+    // Core Health Display
+    let mCoreHealthLabel = SKLabelNode(fontNamed: "Noteworthy Bold")
     
     // Game Settings
     var mWaveBombLastAliveOn : Int = 0
     var mGameOver : Bool = false
     
     // Score
-    let mScoreLabel = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
+    let mScoreLabel = SKLabelNode(fontNamed: "Noteworthy Bold")
     var mScore = 0
     {
         didSet
@@ -75,17 +79,14 @@ class GameScene: SKScene
     }
     
     // Round Counter
-    let mCuurrentWaveLabel = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
+    let mCurrentWaveLabel = SKLabelNode(fontNamed: "Noteworthy Bold")
     var mCurrentWave : Int = 0
     {
         didSet
         {
-            mCuurrentWaveLabel.text = "Wave: \(mCurrentWave)"
+            mCurrentWaveLabel.text = "Wave: \(mCurrentWave)"
         }
     }
-    
-    // Core Health Display
-    let mCoreHealthLabel = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
     
     // Device Motion
     let mMotionManager = CMMotionManager()
@@ -103,7 +104,7 @@ class GameScene: SKScene
     // Gestures
     var mSwipeRightGR : UISwipeGestureRecognizer!
     var mSwipeLeftGR : UISwipeGestureRecognizer!
-    let mSwipePointAccuracy : CGFloat = 100.0
+    var mSwipePointAccuracy : CGFloat = 100.0
     
     // Audio System
     var mAudioSystem : AudioSystem!
@@ -127,6 +128,9 @@ class GameScene: SKScene
         mTextFontSize = mScreenHeight/15
         mTitleFontSize = mScreenHeight/10
         
+        // Set swipe point accuracy
+        mSwipePointAccuracy = mScreenHeight/5
+        
         if mHasCompleteSetup { return }
         
         mSwipeRightGR = UISwipeGestureRecognizer(target: self, action: #selector(manageSwipe))
@@ -145,6 +149,23 @@ class GameScene: SKScene
         mCore.size = CGSize(width: mScreenHeight/5, height: mScreenHeight/5)
         mCore.isUserInteractionEnabled = false
         addChild(mCore)
+        
+        mCoreHealthBar.SetSize(CGSize(width: mScreenWidth/5, height: 50.0))
+        mCoreHealthBar.position = CGPoint(
+            x: mScreenWidth - mCoreHealthBar.mSize.width - 20,
+            y: mScreenHeight - mCoreHealthBar.mSize.height - 10)
+        mCoreHealthBar.Setup(self)
+        mCoreHealthBar.SetAnchorPoint(CGPoint(x: 0, y: 0.5))
+        mCoreHealthBar.SetMaxValue(CGFloat(mCoreStartingHealth))
+        
+        // Core health label
+        mCoreHealthLabel.fontSize = mTextFontSize
+        mCoreHealthLabel.position = CGPoint(x: mScreenWidth/2, y: mScreenHeight/2)
+        mCoreHealthLabel.text = "\(mCore.mHealth)"
+        mCoreHealthLabel.zPosition = 100
+        mCoreHealthLabel.horizontalAlignmentMode = .center
+        mCoreHealthLabel.verticalAlignmentMode = .center
+        addChild(mCoreHealthLabel)
         
         // Setup Viruses
         SetupViruses()
@@ -172,21 +193,13 @@ class GameScene: SKScene
         mScoreLabel.horizontalAlignmentMode = .center
         addChild(mScoreLabel)
         
-        mCuurrentWaveLabel.fontSize = mTextFontSize
-        mCuurrentWaveLabel.position = CGPoint(x: 10, y: mScreenHeight - mCuurrentWaveLabel.fontSize - 10)
-        mCuurrentWaveLabel.text = "SCORE: 0"
-        mCuurrentWaveLabel.zPosition = 100
-        mCuurrentWaveLabel.horizontalAlignmentMode = .left
-        addChild(mCuurrentWaveLabel)
-        
-        // Core health label
-        mCoreHealthLabel.fontSize = mTextFontSize
-        mCoreHealthLabel.position = CGPoint(x: mScreenWidth/2, y: mScreenHeight/2)
-        mCoreHealthLabel.text = "\(mCore.mHealth)"
-        mCoreHealthLabel.zPosition = 100
-        mCoreHealthLabel.horizontalAlignmentMode = .center
-        mCoreHealthLabel.verticalAlignmentMode = .center
-        addChild(mCoreHealthLabel)
+        mCurrentWaveLabel.fontSize = mTextFontSize
+        mCurrentWaveLabel.position = CGPoint(x: 10, y: mScreenHeight - mCurrentWaveLabel.fontSize - 10)
+        mCurrentWaveLabel.text = "SCORE: 0"
+        mCurrentWaveLabel.zPosition = 100
+        mCurrentWaveLabel.horizontalAlignmentMode = .left
+        mCurrentWaveLabel.verticalAlignmentMode = .center
+        addChild(mCurrentWaveLabel)
         
         // Start motion manager (Accelerometer)
         mMotionManager.startAccelerometerUpdates()
@@ -290,6 +303,37 @@ class GameScene: SKScene
         
         super.touchesEnded(touches, with: event)
         
+        guard let touch = touches.first else {
+            return
+        }
+        
+        let pos = touch.location(in: self) // Position of the touch
+        let nodeArr = nodes(at: pos)
+        
+        for node in nodeArr
+        {
+            if node is Virus
+            {
+                //mAudioSystem.PlaySound(name: "pop1")
+                mAudioSystem.PlaySound(name: "pop1", from: self)
+                
+                let currentVirus = node as! Virus
+                currentVirus.DecreaseHealth(by: 1)
+
+                // Check if virus died
+                if currentVirus.IsDead()
+                {
+                    addParticle(pos: node.position, particle: mVirusDeathParticles!)
+                    mScore += 1;
+                    mActiveViruses.remove(currentVirus)
+                    mInactiveViruses.insert(currentVirus)
+                    currentVirus.SetActive(false)
+                }
+                break;
+            }
+        }
+        
+        /*
         // Check all touches
         for touch in touches
         {
@@ -322,6 +366,7 @@ class GameScene: SKScene
                 }
             }
         }
+        */
         
     }
     
@@ -363,6 +408,7 @@ class GameScene: SKScene
     {
         
         // Viruses
+        mAudioSystem.PlaySound(name: "pop1", from: self)
         for virus in mActiveViruses
         {
             addParticle(pos: virus.position, particle: mVirusDeathParticles!)
@@ -383,6 +429,7 @@ class GameScene: SKScene
         // Bombs
         for bomb in mActiveBombs
         {
+            mAudioSystem.PlaySound(name: "explode", from: self)
             addParticle(pos: bomb.position, particle: mExplosionParticles!)
             mActiveBombs.remove(bomb)
             mInactiveBombs.insert(bomb)
@@ -410,6 +457,9 @@ class GameScene: SKScene
             mAccelerometerVector = CGVector(dx: -accelerometer.acceleration.y, dy: accelerometer.acceleration.x).Norm()
         }
         
+        // Update Health Bar
+        mCoreHealthBar.SetValue(CGFloat(mCore!.mHealth))
+        mCoreHealthBar.UpdateRender()
         
         // Check if game should end
         if mCore.IsDead() && !mGameOver
@@ -439,6 +489,7 @@ class GameScene: SKScene
             // Check if virus is within range of the core
             if CGVector.Dist(virus.position, mCore.position) < (mCore.size.width/2 + virus.size.width/2 + 10)
             {
+                mAudioSystem.PlaySound(name: "pop1", from: self)
                 mCore.mHealth -= virus.mDamage
                 virus.mHealth = 0
                 mActiveViruses.remove(virus)
@@ -470,6 +521,7 @@ class GameScene: SKScene
             // Check if red virus is within range of the core
             if CGVector.Dist(redVirus.position, mCore.position) < (mCore.size.width/2 + redVirus.size.width/2 + 10)
             {
+                mAudioSystem.PlaySound(name: "pop1", from: self)
                 mCore.mHealth -= redVirus.mDamage
                 redVirus.mHealth = 0
                 mActiveRedViruses.remove(redVirus)
@@ -604,13 +656,23 @@ class GameScene: SKScene
         {
             if CGVector.Dist(mPillObject.position, mCore.position) < 50.0
             {
+                mAudioSystem.PlaySound(name: "heal", from: self)
                 addParticle(pos: mPillObject.position, particle: mHealParticles!)
                 // Heal the core
                 mCore.mHealth += mPillObject.mHealingAmount
+                if mCore.mHealth > mCoreStartingHealth { mCore.mHealth = mCoreStartingHealth }
                 // Deactivate pill
                 mPillObject.SetActive(false)
             }
         }
+        
+        // Animate Core
+        // Animate Virus
+        let origionalScale = mScreenHeight/5
+        let modification = CGFloat(sin(currentTime * 5)) / 4.0
+        let newScale = origionalScale + (origionalScale * modification)
+        let resizeCore = SKAction.resize(toWidth: newScale, height: newScale, duration: 0.2)
+        mCore.run(resizeCore)
         
         // New wave can begin once all green viruses are dead
         if mActiveViruses.count <= 0
@@ -680,7 +742,7 @@ class GameScene: SKScene
             let randomPositionY = CGFloat.random(in: mScreenHeight/5...(mScreenHeight/5)*4)
             let randomPosition = CGPoint(x: randomPositionX, y: randomPositionY)
             
-            SpawnRedVirus(at: randomPosition, health: 1 * healthMultiplier, speed: 10.0, currentTime: currentTime, damage: 3 * damageMultiplier)
+            SpawnRedVirus(at: randomPosition, health: 1 * healthMultiplier, speed: 5.0, currentTime: currentTime, damage: 3 * damageMultiplier)
         }
         
         // Spawn Bombs
