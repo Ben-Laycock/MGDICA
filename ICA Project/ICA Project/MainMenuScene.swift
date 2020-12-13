@@ -23,17 +23,20 @@ class MainMenuScene: SKScene
     
     // Main Menu
     let mPlayButton = SKSpriteNode(imageNamed: "PlayButton")
-    let mOptionsButton = SKSpriteNode(imageNamed: "InfoButton")
+    let mOptionsButton = SKSpriteNode(imageNamed: "OptionsButton")
     let mInfoButton = SKSpriteNode(imageNamed: "InfoButton")
     
     
     // Options Menu
-    let mOptionsBackButton = SKSpriteNode(imageNamed: "CancelButton")
+    let mOptionsBackButton = SKSpriteNode(imageNamed: "ConfirmButton")
     let mAudioOptionLabel = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
-    let mDisableAudioButton = SKSpriteNode(imageNamed: "CheckboxSelected")
-    let mEnableAudioButton = SKSpriteNode(imageNamed: "Checkbox")
-    var mAudioEnabled : Bool = true
     
+    var mAudioEnabled : Bool = true
+    var mDifficultySetting : Int = 1
+    
+    var mAudioToggle = CustomUIToggle()
+    var mEasyDifficultyToggle = CustomUIToggle()
+
     
     // Info Menu
     let mInfoBackButton = SKSpriteNode(imageNamed: "CancelButton")
@@ -49,6 +52,8 @@ class MainMenuScene: SKScene
     let mPillInfo = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
     let mCoreInfo = SKLabelNode(fontNamed: "HelveticaNeue-Thin")
     
+    // Settings
+    var mInfoFontSize : CGFloat = 24
     
     var mSavedData = UserDefaults.standard
     var mHasCompleteSetup : Bool = false
@@ -59,33 +64,36 @@ class MainMenuScene: SKScene
         
         mAudioEnabled = mSavedData.bool(forKey: "AudioEnabled")
         
+        mDifficultySetting = mSavedData.integer(forKey: "Difficulty")
+        if mDifficultySetting == 0 { mSavedData.set(1, forKey: "Difficulty") }
+        
+        // Exit function if setup has previously been completed
         if mHasCompleteSetup { return }
         
+        mInfoFontSize = mScreenHeight/20
+        
         // ===================  Main menu setup  ===================
-        mMainMenuTitleLabel.position = CGPoint(x: mScreenWidth / 2, y: mScreenHeight / 2)
+        mMainMenuTitleLabel.position = CGPoint(x: mScreenWidth / 2, y: mScreenHeight / 4 * 3)
         mMainMenuTitleLabel.text = "Main Menu"
         mMainMenuTitleLabel.fontSize = 48
         addChild(mMainMenuTitleLabel)
         
         // Play button
         mPlayButton.name = "PlayButton"
-        mPlayButton.position = CGPoint(x: 10 + SKTexture(imageNamed: "PlayButton").size().width / 2,
-                                       y: mScreenHeight / 6 * 4)
-        mPlayButton.size = SKTexture(imageNamed: "PlayButton").size() * 0.3
+        mPlayButton.position = CGPoint(x: mScreenWidth / 6 * 2, y: mScreenHeight / 6 * 2)
+        mPlayButton.size = CGSize(width: mScreenHeight/8, height: mScreenHeight/8)
         addChild(mPlayButton)
         
         // Options button
         mOptionsButton.name = "OptionsButton"
-        mOptionsButton.position = CGPoint(x: 10 + SKTexture(imageNamed: "PlayButton").size().width / 2,
-                                       y: mScreenHeight / 6 * 3)
-        mOptionsButton.size = SKTexture(imageNamed: "InfoButton").size() * 0.3
+        mOptionsButton.position = CGPoint(x: mScreenWidth / 6 * 3, y: mScreenHeight / 6 * 2)
+        mOptionsButton.size = CGSize(width: mScreenHeight/8, height: mScreenHeight/8)
         addChild(mOptionsButton)
         
         // Info button
         mInfoButton.name = "InfoButton"
-        mInfoButton.position = CGPoint(x: 10 + SKTexture(imageNamed: "PlayButton").size().width / 2,
-                                       y: mScreenHeight / 6 * 2)
-        mInfoButton.size = SKTexture(imageNamed: "InfoButton").size() * 0.3
+        mInfoButton.position = CGPoint(x: mScreenWidth / 6 * 4, y: mScreenHeight / 6 * 2)
+        mInfoButton.size = CGSize(width: mScreenHeight/8, height: mScreenHeight/8)
         addChild(mInfoButton)
         
         
@@ -93,7 +101,7 @@ class MainMenuScene: SKScene
         mOptionsBackButton.name = "OptionsBackButton"
         mOptionsBackButton.position = CGPoint(x: 10 + SKTexture(imageNamed: "PlayButton").size().width / 2,
                                        y: mScreenHeight / 6 * 5)
-        mOptionsBackButton.size = SKTexture(imageNamed: "CancelButton").size() * 0.3
+        mOptionsBackButton.size = SKTexture(imageNamed: "ConfirmButton").size() * 0.3
         addChild(mOptionsBackButton)
         
         mAudioOptionLabel.position = CGPoint(x: mScreenWidth / 3, y: mScreenHeight / 2)
@@ -102,15 +110,14 @@ class MainMenuScene: SKScene
         mAudioOptionLabel.fontSize = 36
         addChild(mAudioOptionLabel)
         
-        mDisableAudioButton.name = "DisableAudio"
-        mDisableAudioButton.size = SKTexture(imageNamed: "CheckboxSelected").size() * 0.15
-        mDisableAudioButton.position = CGPoint(x: mScreenWidth / 3 + mAudioOptionLabel.frame.width/2 + mDisableAudioButton.size.width/2 + 20, y: mScreenHeight / 2)
-        addChild(mDisableAudioButton)
+        mAudioToggle.SetScale(mScreenHeight/10, mScreenHeight/10)
+        mAudioToggle.position = CGPoint(x: mScreenWidth / 3 + mAudioOptionLabel.frame.width/2 + mAudioToggle.mOnImage.size.width/2 + 20, y: mScreenHeight / 2)
+        mAudioToggle.Setup(toggleName: "Audio", self)
+        mAudioToggle.SetSelected(mAudioEnabled)
         
-        mEnableAudioButton.name = "EnableAudio"
-        mEnableAudioButton.size = SKTexture(imageNamed: "Checkbox").size() * 0.15
-        mEnableAudioButton.position = CGPoint(x: mScreenWidth / 3 + mAudioOptionLabel.frame.width/2 + mEnableAudioButton.size.width/2 + 20, y: mScreenHeight / 2)
-        addChild(mEnableAudioButton)
+        mEasyDifficultyToggle.position = CGPoint(x: 100.0, y: 100.0)
+        mEasyDifficultyToggle.Setup(toggleName: "EasyDifficulty", self)
+        mEasyDifficultyToggle.SetScale(mScreenHeight/10, mScreenHeight/10)
         
         
         // ===================  Info menu setup  ===================
@@ -123,7 +130,7 @@ class MainMenuScene: SKScene
         // Virus
         mVirusImage.name = "VirusImage"
         mVirusImage.position = CGPoint(x: mScreenWidth / 3, y: mScreenHeight / 6)
-        mVirusImage.size = SKTexture(imageNamed: "Virus").size() * 0.3
+        mVirusImage.size = CGSize(width: mScreenWidth/15, height: mScreenWidth/15)
         addChild(mVirusImage)
         
         mVirusInfo.position = CGPoint(x: mScreenWidth / 3 + 75, y: mScreenHeight / 6)
@@ -131,60 +138,68 @@ class MainMenuScene: SKScene
         mVirusInfo.verticalAlignmentMode = .center
         mVirusInfo.text = "Virus: Click to destroy / Hit them with bombs (Gets stronger per round)"
         mVirusInfo.numberOfLines = 2
-        mVirusInfo.preferredMaxLayoutWidth = mScreenWidth / 3
-        mVirusInfo.fontSize = 24
+        mVirusInfo.preferredMaxLayoutWidth = mScreenWidth / 2
+        mVirusInfo.fontSize = mInfoFontSize
         addChild(mVirusInfo)
         
         // Red Virus
         mRedVirusImage.name = "RedVirusImage"
         mRedVirusImage.position = CGPoint(x: mScreenWidth / 3, y: mScreenHeight / 6 * 2)
-        mRedVirusImage.size = SKTexture(imageNamed: "RedVirus").size() * 0.3
+        mRedVirusImage.size = CGSize(width: mScreenWidth/15, height: mScreenWidth/15)
         addChild(mRedVirusImage)
         
         mRedVirusInfo.position = CGPoint(x: mScreenWidth / 3 + 75, y: mScreenHeight / 6 * 2)
         mRedVirusInfo.horizontalAlignmentMode = .left
         mRedVirusInfo.verticalAlignmentMode = .center
         mRedVirusInfo.text = "Red Virus: Swipe away / Hit with bombs"
-        mRedVirusInfo.fontSize = 24
+        mRedVirusInfo.numberOfLines = 2
+        mRedVirusInfo.preferredMaxLayoutWidth = mScreenWidth / 2
+        mRedVirusInfo.fontSize = mInfoFontSize
         addChild(mRedVirusInfo)
         
         // Bomb
         mBombImage.name = "BombImage"
         mBombImage.position = CGPoint(x: mScreenWidth / 3, y: mScreenHeight / 6 * 3)
-        mBombImage.size = SKTexture(imageNamed: "Mine").size() * 0.3
+        mBombImage.size = CGSize(width: mScreenWidth/15, height: mScreenWidth/15)
         addChild(mBombImage)
         
         mBombInfo.position = CGPoint(x: mScreenWidth / 3 + 75, y: mScreenHeight / 6 * 3)
         mBombInfo.horizontalAlignmentMode = .left
         mBombInfo.verticalAlignmentMode = .center
         mBombInfo.text = "Bomb: Hit viruses to cause an explosion"
-        mBombInfo.fontSize = 24
+        mBombInfo.numberOfLines = 2
+        mBombInfo.preferredMaxLayoutWidth = mScreenWidth / 2
+        mBombInfo.fontSize = mInfoFontSize
         addChild(mBombInfo)
         
         // Pill
         mPillImage.name = "PillImage"
         mPillImage.position = CGPoint(x: mScreenWidth / 3, y: mScreenHeight / 6 * 4)
-        mPillImage.size = SKTexture(imageNamed: "Pill").size() * 0.3
+        mPillImage.size = CGSize(width: mScreenWidth/15, height: mScreenWidth/15)
         addChild(mPillImage)
         
         mPillInfo.position = CGPoint(x: mScreenWidth / 3 + 75, y: mScreenHeight / 6 * 4)
         mPillInfo.horizontalAlignmentMode = .left
         mPillInfo.verticalAlignmentMode = .center
         mPillInfo.text = "Pill: Drag to the core to heal it"
-        mPillInfo.fontSize = 24
+        mPillInfo.numberOfLines = 2
+        mPillInfo.preferredMaxLayoutWidth = mScreenWidth / 2
+        mPillInfo.fontSize = mInfoFontSize
         addChild(mPillInfo)
         
         // Core
         mCoreImage.name = "CoreImage"
         mCoreImage.position = CGPoint(x: mScreenWidth / 3, y: mScreenHeight / 6 * 5)
-        mCoreImage.size = SKTexture(imageNamed: "Core").size() * 0.2
+        mCoreImage.size = CGSize(width: mScreenWidth/15, height: mScreenWidth/15)
         addChild(mCoreImage)
         
         mCoreInfo.position = CGPoint(x: mScreenWidth / 3 + 75, y: mScreenHeight / 6 * 5)
         mCoreInfo.horizontalAlignmentMode = .left
         mCoreInfo.verticalAlignmentMode = .center
         mCoreInfo.text = "Core: Protect it from the viruses"
-        mCoreInfo.fontSize = 24
+        mCoreInfo.numberOfLines = 2
+        mCoreInfo.preferredMaxLayoutWidth = mScreenWidth / 2
+        mCoreInfo.fontSize = mInfoFontSize
         addChild(mCoreInfo)
         
         // Disable info menu
@@ -220,6 +235,7 @@ class MainMenuScene: SKScene
             let pos = touch.location(in: self) // Position of the touch
             let node = atPoint(pos) // Node at the touch position
             
+            // Main Menu
             if node.name == "PlayButton"
             {
                 loadScene()
@@ -239,6 +255,8 @@ class MainMenuScene: SKScene
                 ToggleOptionsMenu(on: true)
             }
             
+            
+            // Info Menu
             if node.name == "InfoBackButton"
             {
                 ToggleInfoMenu(on: false)
@@ -255,21 +273,20 @@ class MainMenuScene: SKScene
                 ToggleMainMenu(on: true)
             }
             
-            if node.name == "DisableAudio"
-            {
-                mAudioEnabled = false
-                mSavedData.set(mAudioEnabled, forKey: "AudioEnabled")
-                mDisableAudioButton.SetActive(false)
-                mEnableAudioButton.SetActive(true)
-            }
+            let touchedName = String(node.name ?? "none")
             
-            if node.name == "EnableAudio"
+            mAudioToggle.touchDetected(touchedName)
+            if mAudioToggle.IsSelected()
             {
                 mAudioEnabled = true
-                mSavedData.set(mAudioEnabled, forKey: "AudioEnabled")
-                mEnableAudioButton.SetActive(false)
-                mDisableAudioButton.SetActive(true)
+                mSavedData.set(true, forKey: "AudioEnabled")
             }
+            else
+            {
+                mAudioEnabled = false
+                mSavedData.set(false, forKey: "AudioEnabled")
+            }
+            
         }
         
     }
@@ -283,7 +300,6 @@ class MainMenuScene: SKScene
     
     override func update(_ currentTime: TimeInterval)
     {
-        
     }
     
     
@@ -301,24 +317,7 @@ class MainMenuScene: SKScene
         mOptionsBackButton.SetActive(status)
         mAudioOptionLabel.SetActive(status)
 
-        mDisableAudioButton.SetActive(status)
-        mEnableAudioButton.SetActive(status)
-        
-        // Options menu is being enabled
-        if true == status
-        {
-            // Audio is disabled
-            if false == mAudioEnabled
-            {
-                mDisableAudioButton.SetActive(false)
-                mEnableAudioButton.SetActive(true)
-            }
-            else
-            {
-                mEnableAudioButton.SetActive(false)
-                mDisableAudioButton.SetActive(true)
-            }
-        }
+        mAudioToggle.Toggle(status)
     }
     
     

@@ -29,8 +29,8 @@ class AudioSystem
         UpdateSettings()
         
         // Sounds
-        pop1 = SKAction.playSoundFileNamed("Sounds/pop1.mp3", waitForCompletion: true)
-        explode = SKAction.playSoundFileNamed("Sounds/pop3.mp3", waitForCompletion: true)
+        pop1 = SKAction.playSoundFileNamed("Sounds/Pop1.mp3", waitForCompletion: true)
+        explode = SKAction.playSoundFileNamed("Sounds/Explosion.wav", waitForCompletion: true)
     }
     
     

@@ -18,6 +18,7 @@
 		B5A4FDEB25779FFA00B89EBC /* CGVectorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5A4FDEA25779FFA00B89EBC /* CGVectorExtensions.swift */; };
 		B5A4FDED2577A02300B89EBC /* CGSizeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5A4FDEC2577A02300B89EBC /* CGSizeExtensions.swift */; };
 		B5A4FDEF2577A06900B89EBC /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5A4FDEE2577A06900B89EBC /* Helpers.swift */; };
+		B5D2F04425857CCB00A35D46 /* CustomUIToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D2F04325857CCB00A35D46 /* CustomUIToggle.swift */; };
 		B5DEA9D02577F5B4001533CA /* Bomb.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5DEA9CF2577F5B4001533CA /* Bomb.swift */; };
 		B5DEA9D4257819AA001533CA /* CGPointExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5DEA9D3257819AA001533CA /* CGPointExtensions.swift */; };
 		B5DEA9D62578293E001533CA /* Core.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5DEA9D52578293E001533CA /* Core.swift */; };
@@ -69,6 +70,7 @@
 		B5A4FDEA25779FFA00B89EBC /* CGVectorExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGVectorExtensions.swift; sourceTree = "<group>"; };
 		B5A4FDEC2577A02300B89EBC /* CGSizeExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGSizeExtensions.swift; sourceTree = "<group>"; };
 		B5A4FDEE2577A06900B89EBC /* Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
+		B5D2F04325857CCB00A35D46 /* CustomUIToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomUIToggle.swift; sourceTree = "<group>"; };
 		B5DEA9CF2577F5B4001533CA /* Bomb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bomb.swift; sourceTree = "<group>"; };
 		B5DEA9D3257819AA001533CA /* CGPointExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGPointExtensions.swift; sourceTree = "<group>"; };
 		B5DEA9D52578293E001533CA /* Core.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core.swift; sourceTree = "<group>"; };
@@ -123,6 +125,50 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B5D2F046258581DB00A35D46 /* CustomUI */ = {
+			isa = PBXGroup;
+			children = (
+				B5D2F04325857CCB00A35D46 /* CustomUIToggle.swift */,
+			);
+			name = CustomUI;
+			sourceTree = "<group>";
+		};
+		B5D2F04B2585826B00A35D46 /* Scenes */ = {
+			isa = PBXGroup;
+			children = (
+				DBF79F142554450B00199755 /* GameScene.sks */,
+				DBF79F182554450B00199755 /* GameScene.swift */,
+				B5DEA9D925784183001533CA /* GameOverScene.sks */,
+				B5DEA9DB25784197001533CA /* GameOverScene.swift */,
+				DBE7BFBA2573C0F5005D711A /* MainMenuScene.sks */,
+				DBE7BFBC2573C122005D711A /* MainMenuScene.swift */,
+			);
+			name = Scenes;
+			sourceTree = "<group>";
+		};
+		B5D2F04C258582A500A35D46 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				B5A4FDEE2577A06900B89EBC /* Helpers.swift */,
+				B5A4FDEA25779FFA00B89EBC /* CGVectorExtensions.swift */,
+				B5DEA9D3257819AA001533CA /* CGPointExtensions.swift */,
+				B5A4FDEC2577A02300B89EBC /* CGSizeExtensions.swift */,
+				B5DEA9D725783971001533CA /* UIViewExtensions.swift */,
+				B576651F2583BDB1009C5882 /* SKNodeExtensions.swift */,
+			);
+			name = Extensions;
+			sourceTree = "<group>";
+		};
+		B5D2F04D258582C500A35D46 /* Particles */ = {
+			isa = PBXGroup;
+			children = (
+				B50709F8257AC21A000DED42 /* VirusDestruction.sks */,
+				B52E032A2580274A00ECD9DC /* RedVirusDestruction.sks */,
+				B514657C257A884A0013CD4E /* Explosion.sks */,
+			);
+			name = Particles;
+			sourceTree = "<group>";
+		};
 		DBAF31D72566B5FA00CB0123 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -156,29 +202,18 @@
 			isa = PBXGroup;
 			children = (
 				DBF79F122554450B00199755 /* AppDelegate.swift */,
-				DBF79F142554450B00199755 /* GameScene.sks */,
 				DBF79F162554450B00199755 /* Actions.sks */,
-				DBF79F182554450B00199755 /* GameScene.swift */,
-				B514657C257A884A0013CD4E /* Explosion.sks */,
-				B50709F8257AC21A000DED42 /* VirusDestruction.sks */,
-				B52E032A2580274A00ECD9DC /* RedVirusDestruction.sks */,
-				B5DEA9D725783971001533CA /* UIViewExtensions.swift */,
-				B576651F2583BDB1009C5882 /* SKNodeExtensions.swift */,
+				B5D2F04D258582C500A35D46 /* Particles */,
+				B5D2F04C258582A500A35D46 /* Extensions */,
 				B52F48A025757F2A00B043DF /* Virus.swift */,
 				B52E032C2580387400ECD9DC /* AudioSystem.swift */,
 				B5372103257C3740003FD35A /* RedVirus.swift */,
 				B5DEA9CF2577F5B4001533CA /* Bomb.swift */,
 				B58D672C2582D4DB008B068F /* Pill.swift */,
 				B5DEA9D52578293E001533CA /* Core.swift */,
-				B5A4FDEA25779FFA00B89EBC /* CGVectorExtensions.swift */,
-				B5DEA9D3257819AA001533CA /* CGPointExtensions.swift */,
-				B5A4FDEC2577A02300B89EBC /* CGSizeExtensions.swift */,
-				B5A4FDEE2577A06900B89EBC /* Helpers.swift */,
 				DBF79F1A2554450B00199755 /* GameViewController.swift */,
-				DBE7BFBA2573C0F5005D711A /* MainMenuScene.sks */,
-				DBE7BFBC2573C122005D711A /* MainMenuScene.swift */,
-				B5DEA9D925784183001533CA /* GameOverScene.sks */,
-				B5DEA9DB25784197001533CA /* GameOverScene.swift */,
+				B5D2F04B2585826B00A35D46 /* Scenes */,
+				B5D2F046258581DB00A35D46 /* CustomUI */,
 				DBF79F1C2554450B00199755 /* Main.storyboard */,
 				DBF79F1F2554450D00199755 /* Assets.xcassets */,
 				DBF79F212554450D00199755 /* LaunchScreen.storyboard */,
@@ -353,6 +388,7 @@
 				B5DEA9D62578293E001533CA /* Core.swift in Sources */,
 				B58D672D2582D4DB008B068F /* Pill.swift in Sources */,
 				DBF79F192554450B00199755 /* GameScene.swift in Sources */,
+				B5D2F04425857CCB00A35D46 /* CustomUIToggle.swift in Sources */,
 				B5A4FDEF2577A06900B89EBC /* Helpers.swift in Sources */,
 				DBF79F1B2554450B00199755 /* GameViewController.swift in Sources */,
 				B5DEA9D02577F5B4001533CA /* Bomb.swift in Sources */,

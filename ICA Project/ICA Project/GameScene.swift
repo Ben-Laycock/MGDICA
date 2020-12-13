@@ -116,7 +116,7 @@ class GameScene: SKScene
         // Setup Core
         mCore = Core(texture: mCoreTexture, color: UIColor.clear, size: mCoreTexture.size(), health: mCoreStartingHealth)
         mCore.position = CGPoint(x: mScreenWidth / 2, y: mScreenHeight / 2)
-        mCore.size = CGSize(width: mCoreTexture.size().width, height: mCoreTexture.size().height) * 0.4
+        mCore.size = CGSize(width: mScreenHeight/5, height: mScreenHeight/5)
         mCore.isUserInteractionEnabled = false
         addChild(mCore)
         
@@ -152,6 +152,7 @@ class GameScene: SKScene
         mCoreHealthLabel.text = "\(mCore.mHealth)"
         mCoreHealthLabel.zPosition = 100
         mCoreHealthLabel.horizontalAlignmentMode = .center
+        mCoreHealthLabel.verticalAlignmentMode = .center
         addChild(mCoreHealthLabel)
         
         // Start motion manager (Accelerometer)
@@ -255,8 +256,6 @@ class GameScene: SKScene
     {
         
         super.touchesEnded(touches, with: event)
-        
-        mCurrentWave = 20
         
         // Check all touches
         for touch in touches
@@ -422,8 +421,8 @@ class GameScene: SKScene
             }
             
             // Animate Virus
-            let origionalScale = mVirusTexture.size().width * 0.2
-            let modification = CGFloat(abs(sin(virus.mTimeSpawned + currentTime)))
+            let origionalScale = mScreenHeight/5
+            let modification = CGFloat(sin(virus.mTimeSpawned + currentTime * 2)) / 4.0
             let newScale = origionalScale + (origionalScale * modification)
             let resizeVirus = SKAction.resize(toWidth: newScale, height: newScale, duration: 0.5)
             virus.run(resizeVirus)
@@ -453,8 +452,8 @@ class GameScene: SKScene
             }
             
             // Animate Red Virus
-            let origionalScale = mRedVirusTexture.size().width * 0.2
-            let modification = CGFloat(abs(sin(redVirus.mTimeSpawned + currentTime)))
+            let origionalScale = mScreenHeight/5
+            let modification = CGFloat(sin(redVirus.mTimeSpawned + currentTime * 2)) / 4.0
             let newScale = origionalScale + (origionalScale * modification)
             let resizeVirus = SKAction.resize(toWidth: newScale, height: newScale, duration: 0.5)
             redVirus.run(resizeVirus)
@@ -553,7 +552,7 @@ class GameScene: SKScene
                 // Play explosion particle
                 addParticle(pos: bomb.position, particle: mExplosionParticles!)
                 // Play explosion sound
-                mAudioSystem.PlaySound(name: "Explode", from: self)
+                mAudioSystem.PlaySound(name: "explode", from: self)
                 
                 // Give score depending on the number of viruses destroyed
                 mScore += Int(pow(Double(numberOfVirusesDestroyed), 2))
@@ -641,7 +640,7 @@ class GameScene: SKScene
             let randomPositionY = CGFloat.random(in: mScreenHeight/5...(mScreenHeight/5)*4)
             let randomPosition = CGPoint(x: randomPositionX, y: randomPositionY)
             
-            SpawnRedVirus(at: randomPosition, health: 1 * healthMultiplier, speed: 20.0, currentTime: currentTime, damage: 3 * damageMultiplier)
+            SpawnRedVirus(at: randomPosition, health: 1 * healthMultiplier, speed: 10.0, currentTime: currentTime, damage: 3 * damageMultiplier)
         }
         
         // Spawn Bombs
@@ -653,7 +652,7 @@ class GameScene: SKScene
                 let randomPositionX = CGFloat.random(in: (mBombTexture.size().width/2)...(mScreenWidth-mBombTexture.size().width/2))
                 let randomPositionY = CGFloat.random(in: (mBombTexture.size().height/2)...(mScreenWidth-mBombTexture.size().height/2))
                 
-                SpawnBomb(at: CGPoint(x: randomPositionX, y: randomPositionY), speed: 20.0, explosionRange: 300.0, explosionDamage: 10)
+                SpawnBomb(at: CGPoint(x: randomPositionX, y: randomPositionY), speed: 20.0, explosionRange: Float(mScreenWidth/3), explosionDamage: 10)
                 mWaveBombLastAliveOn = mCurrentWave
             }
         }
@@ -723,8 +722,8 @@ class GameScene: SKScene
             mInactiveViruses.insert(newVirus)
             
             newVirus.position = CGPoint(x: mScreenWidth - 100.0, y: mScreenHeight / 2)
-            newVirus.size = CGSize(width: mVirusTexture.size().width, height: mVirusTexture.size().height) * 0.2
-            newVirus.physicsBody = SKPhysicsBody(circleOfRadius: mVirusTexture.size().width)
+            newVirus.size = CGSize(width: mScreenHeight/5, height: mScreenHeight/5)
+            newVirus.physicsBody = SKPhysicsBody(circleOfRadius: mScreenHeight/5)
             newVirus.physicsBody?.affectedByGravity = false
             newVirus.physicsBody?.collisionBitMask = 0x0
 
@@ -782,8 +781,8 @@ class GameScene: SKScene
             mInactiveRedViruses.insert(newRedVirus)
             
             newRedVirus.position = CGPoint(x: mScreenWidth - 100.0, y: mScreenHeight / 2)
-            newRedVirus.size = CGSize(width: mVirusTexture.size().width, height: mVirusTexture.size().height) * 0.5
-            newRedVirus.physicsBody = SKPhysicsBody(circleOfRadius: mVirusTexture.size().width)
+            newRedVirus.size = CGSize(width: mScreenHeight/5, height: mScreenHeight/5)
+            newRedVirus.physicsBody = SKPhysicsBody(circleOfRadius: mScreenHeight/5)
             newRedVirus.physicsBody?.affectedByGravity = false
             newRedVirus.physicsBody?.collisionBitMask = 0x0
 
@@ -847,13 +846,13 @@ class GameScene: SKScene
         
         for _ in 1...mNumOfBombs
         {
-            let newBomb = CreateBomb(texture: mBombTexture, movementSpeed: 20.0, explosionRange: 200.0, explosionDamage: 5)
+            let newBomb = CreateBomb(texture: mBombTexture, movementSpeed: 20.0, explosionRange: Float(mScreenWidth/3), explosionDamage: 5)
             
             mInactiveBombs.insert(newBomb)
             
             newBomb.position = CGPoint(x: mScreenWidth - 100.0, y: mScreenHeight / 2)
-            newBomb.size = CGSize(width: mBombTexture.size().width, height: mBombTexture.size().height) * 0.4
-            newBomb.physicsBody = SKPhysicsBody(circleOfRadius: mBombTexture.size().width)
+            newBomb.size = CGSize(width: mScreenHeight/5, height: mScreenHeight/5)
+            newBomb.physicsBody = SKPhysicsBody(circleOfRadius: mScreenHeight/5)
             newBomb.physicsBody?.affectedByGravity = false
             newBomb.physicsBody?.collisionBitMask = 0x00000000
 

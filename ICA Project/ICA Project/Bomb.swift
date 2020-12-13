@@ -75,7 +75,7 @@ class Bomb : SKSpriteNode
             self.physicsBody?.velocity.dx = 0
         }
         
-        if position.y > mScreenHeight - size.height / 2
+        if Int(position.y) > Int(mScreenHeight - size.height / 2)
         {
             position.y = mScreenHeight - size.height / 2
             self.physicsBody?.velocity.dy = 0
