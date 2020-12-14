@@ -58,6 +58,7 @@ class Bomb : SKSpriteNode
         //self.physicsBody?.velocity = mMovementDirection * CGFloat(mMovementSpeed)
         self.physicsBody?.applyImpulse(mMovementDirection * CGFloat(mMovementSpeed))
         
+        // Keep the bomb within the screen bounds
         LockToScreen()
     }
     
